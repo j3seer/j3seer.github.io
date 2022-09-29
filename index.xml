@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>j3seer</title>
+    
+    
+    
+    <link>https://j3seer.github.io/</link>
+    <description>Recent content on j3seer</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 29 Sep 2022 10:29:54 -0400</lastBuildDate>
+    
+	<atom:link href="https://j3seer.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>$~: whoami</title>
+      <link>https://j3seer.github.io/whoami/</link>
+      <pubDate>Thu, 29 Sep 2022 10:02:21 -0400</pubDate>
+      
+      <guid>https://j3seer.github.io/whoami/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          @j3seer # Web developper &amp;amp; CTF player, focused mostly on web exploitation and forensics
+Interests # Cybersecurity CTFs DFIR DevOps / Web developpement Gaming Cats :3 Twitter Github
+          
+        
+        </description>
+    </item>
+    
+    <item>
+      <title>DiceCTF@Hope 2022 - Writeup</title>
+      <link>https://j3seer.github.io/posts/dicectfhope_writeup/</link>
+      <pubDate>Thu, 29 Sep 2022 08:59:19 -0400</pubDate>
+      
+      <guid>https://j3seer.github.io/posts/dicectfhope_writeup/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          Writeup for web challenges from diceCTF @Hope 2022
+          
+        
+        </description>
+    </item>
+    
+    <item>
+      <title>NCSC 2021 - Writeup</title>
+      <link>https://j3seer.github.io/posts/ncsc_2021_writeup/</link>
+      <pubDate>Mon, 29 Aug 2022 12:00:26 -0400</pubDate>
+      
+      <guid>https://j3seer.github.io/posts/ncsc_2021_writeup/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          Writeup for challenges in the National Cyber Security Congress(NCSC) CTF by @Securinets 
+          
+        
+        </description>
+    </item>
+    
+  </channel>
+</rss>
