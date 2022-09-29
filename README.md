@@ -1,1 +1,1 @@
- # j3seer.github.io blog
+ # personal blog :)
