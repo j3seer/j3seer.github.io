@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>rce on j3seer</title>
+    
+    
+    
+    <link>https://j3seer.github.io/tags/rce/</link>
+    <description>Recent content in rce on j3seer</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 23 Jan 2023 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://j3seer.github.io/tags/rce/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>PyCGI - bi0sCTF Writeup</title>
+      <link>https://j3seer.github.io/posts/pycgi_bi0ctf/</link>
+      <pubDate>Mon, 23 Jan 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://j3seer.github.io/posts/pycgi_bi0ctf/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          Writeup for challenges in the National Cyber Security Congress(NCSC) CTF by @Securinets 
+          
+        
+        </description>
+    </item>
+    
+  </channel>
+</rss>

