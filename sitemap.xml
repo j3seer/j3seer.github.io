@@ -20,6 +20,18 @@
     <loc>https://j3seer.github.io/tags/</loc>
     <lastmod>2023-01-23T00:00:00+00:00</lastmod>
   </url><url>
+    <loc>https://j3seer.github.io/posts/c.o.p_htb_writeup/</loc>
+    <lastmod>2023-01-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://j3seer.github.io/tags/deserilization/</loc>
+    <lastmod>2023-01-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://j3seer.github.io/tags/pickle/</loc>
+    <lastmod>2023-01-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://j3seer.github.io/tags/sql-injection/</loc>
+    <lastmod>2023-01-16T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://j3seer.github.io/tags/blacklist/</loc>
     <lastmod>2022-12-05T00:00:00+00:00</lastmod>
   </url><url>
@@ -39,16 +51,13 @@
     <lastmod>2022-09-29T10:29:54-04:00</lastmod>
   </url><url>
     <loc>https://j3seer.github.io/posts/dicectfhope_writeup/</loc>
-    <lastmod>2022-09-29T08:59:19-04:00</lastmod>
+    <lastmod>2022-09-29T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://j3seer.github.io/tags/mathjax/</loc>
-    <lastmod>2022-09-29T08:59:19-04:00</lastmod>
-  </url><url>
-    <loc>https://j3seer.github.io/tags/sql-injection/</loc>
-    <lastmod>2022-09-29T08:59:19-04:00</lastmod>
+    <lastmod>2022-09-29T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://j3seer.github.io/tags/xss/</loc>
-    <lastmod>2022-09-29T08:59:19-04:00</lastmod>
+    <lastmod>2022-09-29T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://j3seer.github.io/posts/ncsc_2022_writeup/</loc>
     <lastmod>2022-02-13T00:00:00+00:00</lastmod>

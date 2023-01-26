@@ -34,5 +34,25 @@
         </description>
     </item>
     
+    <item>
+      <title>C.O.P - HTB Writeup</title>
+      <link>https://j3seer.github.io/posts/c.o.p_htb_writeup/</link>
+      <pubDate>Mon, 16 Jan 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://j3seer.github.io/posts/c.o.p_htb_writeup/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          Writeup for a web challenge from HTB
+          
+        
+        </description>
+    </item>
+    
   </channel>
 </rss>

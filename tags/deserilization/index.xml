@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>sql injection on j3seer</title>
+    <title>deserilization on j3seer</title>
     
     
     
-    <link>https://j3seer.github.io/tags/sql-injection/</link>
-    <description>Recent content in sql injection on j3seer</description>
+    <link>https://j3seer.github.io/tags/deserilization/</link>
+    <description>Recent content in deserilization on j3seer</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 16 Jan 2023 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://j3seer.github.io/tags/sql-injection/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://j3seer.github.io/tags/deserilization/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -29,26 +29,6 @@
         
         
           Writeup for a web challenge from HTB
-          
-        
-        </description>
-    </item>
-    
-    <item>
-      <title>DiceCTF@Hope 2022 - Writeup</title>
-      <link>https://j3seer.github.io/posts/dicectfhope_writeup/</link>
-      <pubDate>Thu, 29 Sep 2022 00:00:00 +0000</pubDate>
-      
-      <guid>https://j3seer.github.io/posts/dicectfhope_writeup/</guid>
-      <description>
-        
-          
-          
-          
-        
-        
-        
-          Writeup for web challenges from diceCTF @Hope 2022
           
         
         </description>
