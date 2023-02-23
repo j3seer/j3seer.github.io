@@ -95,66 +95,6 @@
     </item>
     
     <item>
-      <title>deserilization</title>
-      <link>https://j3seer.github.io/tags/deserilization/</link>
-      <pubDate>Mon, 16 Jan 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://j3seer.github.io/tags/deserilization/</guid>
-      <description>
-        
-          
-          
-          
-        
-        
-        
-          
-          
-        
-        </description>
-    </item>
-    
-    <item>
-      <title>pickle</title>
-      <link>https://j3seer.github.io/tags/pickle/</link>
-      <pubDate>Mon, 16 Jan 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://j3seer.github.io/tags/pickle/</guid>
-      <description>
-        
-          
-          
-          
-        
-        
-        
-          
-          
-        
-        </description>
-    </item>
-    
-    <item>
-      <title>sql injection</title>
-      <link>https://j3seer.github.io/tags/sql-injection/</link>
-      <pubDate>Mon, 16 Jan 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://j3seer.github.io/tags/sql-injection/</guid>
-      <description>
-        
-          
-          
-          
-        
-        
-        
-          
-          
-        
-        </description>
-    </item>
-    
-    <item>
       <title>blacklist</title>
       <link>https://j3seer.github.io/tags/blacklist/</link>
       <pubDate>Mon, 05 Dec 2022 00:00:00 +0000</pubDate>
@@ -220,6 +160,26 @@
       <pubDate>Thu, 29 Sep 2022 00:00:00 +0000</pubDate>
       
       <guid>https://j3seer.github.io/tags/mathjax/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          
+          
+        
+        </description>
+    </item>
+    
+    <item>
+      <title>sql injection</title>
+      <link>https://j3seer.github.io/tags/sql-injection/</link>
+      <pubDate>Thu, 29 Sep 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://j3seer.github.io/tags/sql-injection/</guid>
       <description>
         
           
