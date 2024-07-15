@@ -2,9 +2,6 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>nginx on j3seer</title>
-    
-    
-    
     <link>https://j3seer.github.io/tags/nginx/</link>
     <description>Recent content in nginx on j3seer</description>
     <generator>Hugo -- gohugo.io</generator>
@@ -20,18 +17,12 @@
       <pubDate>Sun, 13 Feb 2022 00:00:00 +0000</pubDate>
       
       <guid>https://j3seer.github.io/posts/ncsc_2022_writeup/</guid>
-      <description>
-        
-          
-          
-          
-        
-        
-        
-          Writeup for challenges in the National Cyber Security Congress(NCSC) CTF by @Securinets 
-          
-        
-        </description>
+      <description>Our team got 5th
+Solved Web challenges
+Team score :  Welcome to Web Universe Let&amp;rsquo;s warmup a little bit now with some cool stuffs! Web is really always the best!!
+Link: http://20.119.58.135:4567/leetstatus
+Author: Kahla
+At first i didn&amp;rsquo;t know where to go and how to try to solve this i tried to check for robots.txt or index.php or index.html .. couldn&amp;rsquo;t find anything until i checked the source code that was provided</description>
     </item>
     
   </channel>

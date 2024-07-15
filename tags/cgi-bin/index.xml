@@ -2,9 +2,6 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>cgi-bin on j3seer</title>
-    
-    
-    
     <link>https://j3seer.github.io/tags/cgi-bin/</link>
     <description>Recent content in cgi-bin on j3seer</description>
     <generator>Hugo -- gohugo.io</generator>
@@ -20,18 +17,8 @@
       <pubDate>Mon, 23 Jan 2023 00:00:00 +0000</pubDate>
       
       <guid>https://j3seer.github.io/posts/pycgi_bi0ctf/</guid>
-      <description>
-        
-          
-          
-          
-        
-        
-        
-          Writeup for a challenge from bi0sCTF
-          
-        
-        </description>
+      <description>This challenge was about python CGI scripts, where instead of having regular .cgi scripts, python is used to run them which makes it easier to write. Combined with an RCE in pandas&amp;rsquo;s df.query() function.
+Analysis This challenge required many steps but they were very well staged in a way that wasn&amp;rsquo;t guessy. I admit tho at first we only got the nginx.conf file which doesn&amp;rsquo;t really give us much, but then we were given the Dockerfile and that made it much easier to analyse.</description>
     </item>
     
   </channel>

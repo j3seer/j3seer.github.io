@@ -1,0 +1,30 @@
+
+
+@import url('https://fonts.googleapis.com/css?family=JetBrains%20Mono');
+html { font-family:
+        'JetBrains Mono',
+        sans-serif,
+        'Apple Color Emoji',
+        'Segoe UI Emoji',
+        'Segoe UI Symbol';
+      }
+@supports (font-variation-settings: normal) {
+  html { font-family:
+          'JetBrains Mono',
+          sans-serif,
+          'Apple Color Emoji',
+          'Segoe UI Emoji',
+          'Segoe UI Symbol';
+        }
+}
+
+code {
+  font-family:
+          'JetBrains Mono',
+          sans-serif,
+          'Apple Color Emoji',
+          'Segoe UI Emoji',
+          'Segoe UI Symbol';
+        
+  font-size: 85%;
+}
