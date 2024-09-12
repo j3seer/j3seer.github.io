@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>pandas on j3seer</title>
-    <link>https://j3seer.github.io/tags/pandas/</link>
+    <link>http://localhost:1313/tags/pandas/</link>
     <description>Recent content in pandas on j3seer</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 23 Jan 2023 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://j3seer.github.io/tags/pandas/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://localhost:1313/tags/pandas/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>PyCGI - bi0sCTF Writeup</title>
-      <link>https://j3seer.github.io/posts/pycgi_bi0ctf/</link>
+      <link>http://localhost:1313/posts/pycgi_bi0ctf/</link>
       <pubDate>Mon, 23 Jan 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://j3seer.github.io/posts/pycgi_bi0ctf/</guid>
+      <guid>http://localhost:1313/posts/pycgi_bi0ctf/</guid>
       <description>This challenge was about python CGI scripts, where instead of having regular .cgi scripts, python is used to run them which makes it easier to write. Combined with an RCE in pandas&amp;rsquo;s df.query() function.
 Analysis This challenge required many steps but they were very well staged in a way that wasn&amp;rsquo;t guessy. I admit tho at first we only got the nginx.conf file which doesn&amp;rsquo;t really give us much, but then we were given the Dockerfile and that made it much easier to analyse.</description>
     </item>

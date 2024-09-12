@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>nginx on j3seer</title>
-    <link>https://j3seer.github.io/tags/nginx/</link>
+    <link>http://localhost:1313/tags/nginx/</link>
     <description>Recent content in nginx on j3seer</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 13 Feb 2022 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://j3seer.github.io/tags/nginx/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://localhost:1313/tags/nginx/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>NCSC 2022 - Writeup</title>
-      <link>https://j3seer.github.io/posts/ncsc_2022_writeup/</link>
+      <link>http://localhost:1313/posts/ncsc_2022_writeup/</link>
       <pubDate>Sun, 13 Feb 2022 00:00:00 +0000</pubDate>
       
-      <guid>https://j3seer.github.io/posts/ncsc_2022_writeup/</guid>
+      <guid>http://localhost:1313/posts/ncsc_2022_writeup/</guid>
       <description>Our team got 5th
 Solved Web challenges
 Team score :  Welcome to Web Universe Let&amp;rsquo;s warmup a little bit now with some cool stuffs! Web is really always the best!!

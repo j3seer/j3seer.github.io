@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>jinja on j3seer</title>
-    <link>https://j3seer.github.io/tags/jinja/</link>
+    <link>http://localhost:1313/tags/jinja/</link>
     <description>Recent content in jinja on j3seer</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 05 Dec 2022 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://j3seer.github.io/tags/jinja/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://localhost:1313/tags/jinja/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Teach me - SparkCTF Writeup</title>
-      <link>https://j3seer.github.io/posts/sparkctf-2022-writeup/</link>
+      <link>http://localhost:1313/posts/sparkctf-2022-writeup/</link>
       <pubDate>Mon, 05 Dec 2022 00:00:00 +0000</pubDate>
       
-      <guid>https://j3seer.github.io/posts/sparkctf-2022-writeup/</guid>
+      <guid>http://localhost:1313/posts/sparkctf-2022-writeup/</guid>
       <description>Description This challenge was about acheiving SSTI rce with an abstract way of getting the attributes and builtins. The idea was inspired from the GDG Algiers CTF 2022.
 I really loved the idea of using some abstract filter that can  &amp;ldquo;almost&amp;rdquo;  trully bypass any blacklist ( still need more research ) but the main thing is that we can now trully call any attribute using this trick and its rare that a blacklist would prevent you from using the map filter.</description>
     </item>

@@ -2,41 +2,54 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on j3seer</title>
-    <link>https://j3seer.github.io/posts/</link>
+    <link>http://localhost:1313/posts/</link>
     <description>Recent content in Posts on j3seer</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 29 Sep 2022 10:46:25 -0400</lastBuildDate>
     
-	<atom:link href="https://j3seer.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>TwigPlayground - CSCTF 2024</title>
+      <link>http://localhost:1313/posts/twigplayground/</link>
+      <pubDate>Sat, 09 Mar 2024 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/posts/twigplayground/</guid>
+      <description>Description  Check out my free online Twig playground! https://twig-playground-web.challs.csc.tf
+Author: 0xM4hm0ud
+ Had some time last weekend to play CyberSpace ctf 2024, and managed to solve TwigPlayground by 0xM4hm0ud
+Twig SSTI For this challenge, by reading the src we can tell any basic SSTI payload wont work.
+&amp;lt;?php ini_set(&amp;#39;display_errors&amp;#39;, 0); ini_set(&amp;#39;error_reporting&amp;#39;, 0); if ($_SERVER[&amp;#39;REQUEST_METHOD&amp;#39;] === &amp;#39;POST&amp;#39;) { require_once &amp;#39;vendor/autoload.php&amp;#39;; $loader = new \Twig\Loader\ArrayLoader([]); $twig = new \Twig\Environment($loader, [ &amp;#39;debug&amp;#39; =&amp;gt; true, ]); $twig-&amp;gt;addExtension(new \Twig\Extension\DebugExtension()); $context = [ &amp;#39;user&amp;#39; =&amp;gt; [ &amp;#39;name&amp;#39; =&amp;gt; &amp;#39;Wesley&amp;#39;, &amp;#39;age&amp;#39; =&amp;gt; 30, ], &amp;#39;items&amp;#39; =&amp;gt; [&amp;#39;Apple&amp;#39;, &amp;#39;Banana&amp;#39;, &amp;#39;Cherry&amp;#39;, &amp;#39;Dragonfruit&amp;#39;], ]; // Ensure no SSTI or RCE vulnerabilities  $blacklist = [&amp;#39;system&amp;#39;, &amp;#39;id&amp;#39;, &amp;#39;passthru&amp;#39;, &amp;#39;exec&amp;#39;, &amp;#39;shell_exec&amp;#39;, &amp;#39;popen&amp;#39;, &amp;#39;proc_open&amp;#39;, &amp;#39;pcntl_exec&amp;#39;, &amp;#39;_self&amp;#39;, &amp;#39;reduce&amp;#39;, &amp;#39;env&amp;#39;, &amp;#39;sort&amp;#39;, &amp;#39;map&amp;#39;, &amp;#39;filter&amp;#39;, &amp;#39;replace&amp;#39;, &amp;#39;encoding&amp;#39;, &amp;#39;include&amp;#39;, &amp;#39;file&amp;#39;, &amp;#39;run&amp;#39;, &amp;#39;Closure&amp;#39;, &amp;#39;Callable&amp;#39;, &amp;#39;Process&amp;#39;, &amp;#39;Symfony&amp;#39;, &amp;#39;\&amp;#39;&amp;#39;, &amp;#39;&amp;#34;&amp;#39;, &amp;#39;.</description>
+    </item>
+    
+    <item>
       <title>PyCGI - bi0sCTF Writeup</title>
-      <link>https://j3seer.github.io/posts/pycgi_bi0ctf/</link>
+      <link>http://localhost:1313/posts/pycgi_bi0ctf/</link>
       <pubDate>Mon, 23 Jan 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://j3seer.github.io/posts/pycgi_bi0ctf/</guid>
+      <guid>http://localhost:1313/posts/pycgi_bi0ctf/</guid>
       <description>This challenge was about python CGI scripts, where instead of having regular .cgi scripts, python is used to run them which makes it easier to write. Combined with an RCE in pandas&amp;rsquo;s df.query() function.
 Analysis This challenge required many steps but they were very well staged in a way that wasn&amp;rsquo;t guessy. I admit tho at first we only got the nginx.conf file which doesn&amp;rsquo;t really give us much, but then we were given the Dockerfile and that made it much easier to analyse.</description>
     </item>
     
     <item>
       <title>Teach me - SparkCTF Writeup</title>
-      <link>https://j3seer.github.io/posts/sparkctf-2022-writeup/</link>
+      <link>http://localhost:1313/posts/sparkctf-2022-writeup/</link>
       <pubDate>Mon, 05 Dec 2022 00:00:00 +0000</pubDate>
       
-      <guid>https://j3seer.github.io/posts/sparkctf-2022-writeup/</guid>
+      <guid>http://localhost:1313/posts/sparkctf-2022-writeup/</guid>
       <description>Description This challenge was about acheiving SSTI rce with an abstract way of getting the attributes and builtins. The idea was inspired from the GDG Algiers CTF 2022.
 I really loved the idea of using some abstract filter that can  &amp;ldquo;almost&amp;rdquo;  trully bypass any blacklist ( still need more research ) but the main thing is that we can now trully call any attribute using this trick and its rare that a blacklist would prevent you from using the map filter.</description>
     </item>
     
     <item>
       <title>DiceCTF@Hope 2022 - Writeup</title>
-      <link>https://j3seer.github.io/posts/dicectfhope_writeup/</link>
+      <link>http://localhost:1313/posts/dicectfhope_writeup/</link>
       <pubDate>Thu, 29 Sep 2022 08:59:19 -0400</pubDate>
       
-      <guid>https://j3seer.github.io/posts/dicectfhope_writeup/</guid>
+      <guid>http://localhost:1313/posts/dicectfhope_writeup/</guid>
       <description>Mostly solved the web challenges with Task_Hashed
  Reverser the website is a text reverser and from the source code we can tell its an SSTI so we just have to put a regular SSTI payload but just reversed
 regular payload:
@@ -47,10 +60,10 @@ if (paste.search(/&amp;lt;.*&amp;gt;/) !== -1) { return res.redirect(&amp;#39;/f
     
     <item>
       <title>NCSC 2022 - Writeup</title>
-      <link>https://j3seer.github.io/posts/ncsc_2022_writeup/</link>
+      <link>http://localhost:1313/posts/ncsc_2022_writeup/</link>
       <pubDate>Sun, 13 Feb 2022 00:00:00 +0000</pubDate>
       
-      <guid>https://j3seer.github.io/posts/ncsc_2022_writeup/</guid>
+      <guid>http://localhost:1313/posts/ncsc_2022_writeup/</guid>
       <description>Our team got 5th
 Solved Web challenges
 Team score :  Welcome to Web Universe Let&amp;rsquo;s warmup a little bit now with some cool stuffs! Web is really always the best!!
