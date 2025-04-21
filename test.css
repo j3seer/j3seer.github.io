@@ -1,4 +1,0 @@
-* {
-    --var:  attr(id);
-    background: image-set(var(--var));
- }
