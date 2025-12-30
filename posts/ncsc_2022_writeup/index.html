@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head><script src="/livereload.js?port=1313&mindelay=10&v=2" data-no-instant defer></script>
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=&amp;path=livereload" data-no-instant defer></script>
 
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
@@ -20,7 +20,11 @@
       
       
       <li class="pull-left ">
-        <a href="http://localhost:1313/">~/j3seer</a>
+        <a href="https://j3seer.github.io/">~/j3seer
+
+          https://j3seer.github.io/
+          
+        </a>
       </li>
       
       
@@ -96,23 +100,23 @@
 i tried to check for robots.txt or index.php or index.html .. couldn&rsquo;t find anything until i checked the source code that was provided</p>
 <p>it seems like the website is running using nginx !</p>
 <p>looking into <code>main.py</code> we see this :</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">from</span> flask <span style="color:#ff79c6">import</span> Flask
-<span style="color:#ff79c6">import</span> os
-
-flag<span style="color:#ff79c6">=</span>os<span style="color:#ff79c6">.</span>getenv(<span style="color:#f1fa8c">&#34;FLAG&#34;</span>)
-app <span style="color:#ff79c6">=</span> Flask(__name__, static_url_path<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;/static/&#39;</span>)
-@app.route(<span style="color:#f1fa8c">&#34;/v1/status&#34;</span>)
-<span style="color:#ff79c6">def</span> <span style="color:#50fa7b">index</span>():
-	<span style="color:#ff79c6">return</span> <span style="color:#f1fa8c">&#34;Everything is good afaik&#34;</span>
-
-@app.route(<span style="color:#f1fa8c">&#34;/flag&#34;</span>)
-<span style="color:#ff79c6">def</span> <span style="color:#50fa7b">flag</span>():
-	<span style="color:#ff79c6">return</span> flag
-
-<span style="color:#ff79c6">if</span> __name__ <span style="color:#ff79c6">==</span> <span style="color:#f1fa8c">&#39;__main__&#39;</span>:
-	app<span style="color:#ff79c6">.</span>run()
-</code></pre></div><p>nginx config file :</p>
-<pre><code>server {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ff79c6">from</span> flask <span style="color:#ff79c6">import</span> Flask
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> os
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>flag<span style="color:#ff79c6">=</span>os<span style="color:#ff79c6">.</span>getenv(<span style="color:#f1fa8c">&#34;FLAG&#34;</span>)
+</span></span><span style="display:flex;"><span>app <span style="color:#ff79c6">=</span> Flask(<span style="color:#8be9fd;font-style:italic">__name__</span>, static_url_path<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;/static/&#39;</span>)
+</span></span><span style="display:flex;"><span>@app.route(<span style="color:#f1fa8c">&#34;/v1/status&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">def</span> <span style="color:#50fa7b">index</span>():
+</span></span><span style="display:flex;"><span>	<span style="color:#ff79c6">return</span> <span style="color:#f1fa8c">&#34;Everything is good afaik&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>@app.route(<span style="color:#f1fa8c">&#34;/flag&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">def</span> <span style="color:#50fa7b">flag</span>():
+</span></span><span style="display:flex;"><span>	<span style="color:#ff79c6">return</span> flag
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">__name__</span> <span style="color:#ff79c6">==</span> <span style="color:#f1fa8c">&#39;__main__&#39;</span>:
+</span></span><span style="display:flex;"><span>	app<span style="color:#ff79c6">.</span>run()
+</span></span></code></pre></div><p>nginx config file :</p>
+<pre tabindex="0"><code>server {
 listen 80;
 server_name welcome.task;
 
@@ -139,29 +143,28 @@ After few googling i figured that we can try to find the path to /flag
 Link: http://20.119.58.135:1234</p>
 <p><strong>Author: Kahla</strong></p>
 <p>we were provided this php source code</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">
-<span style="color:#ff79c6">&lt;?php</span>
-<span style="color:#6272a4">//Show Page code source
-</span><span style="color:#6272a4"></span>highlight_file(__FILE__);
-<span style="color:#ff79c6">require</span> <span style="color:#f1fa8c">&#34;secret.php&#34;</span>;
-<span style="color:#ff79c6">if</span>(isset(<span style="color:#8be9fd;font-style:italic">$_GET</span>[<span style="color:#f1fa8c">&#34;__&#34;</span>])<span style="color:#ff79c6">&amp;&amp;</span>isset(<span style="color:#8be9fd;font-style:italic">$_GET</span>[<span style="color:#f1fa8c">&#34;_&#34;</span>])){
-<span style="color:#8be9fd;font-style:italic">$x</span><span style="color:#ff79c6">=</span><span style="color:#8be9fd;font-style:italic">$_GET</span>[<span style="color:#f1fa8c">&#34;__&#34;</span>];
-<span style="color:#8be9fd;font-style:italic">$inp</span><span style="color:#ff79c6">=</span>preg_replace(<span style="color:#f1fa8c">&#34;/[^A-Za-z0-9$]/&#34;</span>,<span style="color:#f1fa8c">&#34;&#34;</span>,<span style="color:#8be9fd;font-style:italic">$_GET</span>[<span style="color:#f1fa8c">&#34;_&#34;</span>]);
-<span style="color:#ff79c6">if</span>(<span style="color:#8be9fd;font-style:italic">$inp</span><span style="color:#ff79c6">===</span><span style="color:#f1fa8c">&#34;Kahla&#34;</span>){
-    <span style="color:#ff79c6">die</span>(<span style="color:#f1fa8c">&#34;Hacking Attempt detected&#34;</span>);
-}
-<span style="color:#ff79c6">else</span>{
-    <span style="color:#ff79c6">if</span>(<span style="color:#ff79c6">eval</span>(<span style="color:#f1fa8c">&#34;return </span><span style="color:#f1fa8c">$inp</span><span style="color:#f1fa8c">=&#34;</span><span style="color:#ff79c6">.</span><span style="color:#8be9fd;font-style:italic">$inp</span><span style="color:#ff79c6">.</span><span style="color:#f1fa8c">&#34;;&#34;</span>)<span style="color:#ff79c6">===</span><span style="color:#f1fa8c">&#34;Kahla&#34;</span>){
-        <span style="color:#ff79c6">echo</span> <span style="color:#8be9fd;font-style:italic">$flag</span>;
-    }
-    <span style="color:#ff79c6">else</span>{
-        <span style="color:#ff79c6">die</span>(<span style="color:#f1fa8c">&#34;Pretty Close maybe ?&#34;</span>);
-    }
-}
-}
-<span style="color:#ff79c6">?&gt;</span>
-
-</code></pre></div><p>trying to send <strong>&ldquo;Kahla&rdquo;</strong> in the <strong>_</strong> param prints out this prompt</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">&lt;?</span>php
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">//Show Page code source
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>highlight_file(__FILE__);
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">require</span> <span style="color:#f1fa8c">&#34;secret.php&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">if</span>(isset(<span style="color:#8be9fd;font-style:italic">$_GET</span>[<span style="color:#f1fa8c">&#34;__&#34;</span>])<span style="color:#ff79c6">&amp;&amp;</span>isset(<span style="color:#8be9fd;font-style:italic">$_GET</span>[<span style="color:#f1fa8c">&#34;_&#34;</span>])){
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">$x</span><span style="color:#ff79c6">=</span><span style="color:#8be9fd;font-style:italic">$_GET</span>[<span style="color:#f1fa8c">&#34;__&#34;</span>];
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">$inp</span><span style="color:#ff79c6">=</span>preg_replace(<span style="color:#f1fa8c">&#34;/[^A-Za-z0-9$]/&#34;</span>,<span style="color:#f1fa8c">&#34;&#34;</span>,<span style="color:#8be9fd;font-style:italic">$_GET</span>[<span style="color:#f1fa8c">&#34;_&#34;</span>]);
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">if</span>(<span style="color:#8be9fd;font-style:italic">$inp</span><span style="color:#ff79c6">===</span><span style="color:#f1fa8c">&#34;Kahla&#34;</span>){
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">die</span>(<span style="color:#f1fa8c">&#34;Hacking Attempt detected&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">else</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">if</span>(<span style="color:#ff79c6">eval</span>(<span style="color:#f1fa8c">&#34;return </span><span style="color:#f1fa8c">$inp</span><span style="color:#f1fa8c">=&#34;</span><span style="color:#ff79c6">.</span><span style="color:#8be9fd;font-style:italic">$inp</span><span style="color:#ff79c6">.</span><span style="color:#f1fa8c">&#34;;&#34;</span>)<span style="color:#ff79c6">===</span><span style="color:#f1fa8c">&#34;Kahla&#34;</span>){
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">echo</span> <span style="color:#8be9fd;font-style:italic">$flag</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">else</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">die</span>(<span style="color:#f1fa8c">&#34;Pretty Close maybe ?&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">?&gt;</span>
+</span></span></code></pre></div><p>trying to send <strong>&ldquo;Kahla&rdquo;</strong> in the <strong>_</strong> param prints out this prompt</p>
 <p>Payload : <code>http://20.119.58.135:1234/?__=&amp;_=Kahla</code></p>
 <p>Output :</p>
 <p><img src="https://user-images.githubusercontent.com/58823465/151814781-7f079c2b-0cf4-42eb-8a71-250713e79fca.png" alt="a"></p>

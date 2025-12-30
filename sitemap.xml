@@ -1,118 +1,72 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
   <url>
-    <loc>http://localhost:1313/tags/blacklist/</loc>
+    <loc>https://j3seer.github.io/tags/blacklist/</loc>
     <lastmod>2024-03-09T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://localhost:1313/tags/ssti/</loc>
+  </url><url>
+    <loc>https://j3seer.github.io/tags/ssti/</loc>
     <lastmod>2024-03-09T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://localhost:1313/tags/</loc>
+  </url><url>
+    <loc>https://j3seer.github.io/tags/</loc>
     <lastmod>2024-03-09T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://localhost:1313/tags/twig/</loc>
+  </url><url>
+    <loc>https://j3seer.github.io/tags/twig/</loc>
     <lastmod>2024-03-09T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://localhost:1313/posts/twigplayground/</loc>
+  </url><url>
+    <loc>https://j3seer.github.io/posts/twigplayground/</loc>
     <lastmod>2024-03-09T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://localhost:1313/tags/cgi-bin/</loc>
+  </url><url>
+    <loc>https://j3seer.github.io/tags/cgi-bin/</loc>
     <lastmod>2023-01-23T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://localhost:1313/tags/pandas/</loc>
+  </url><url>
+    <loc>https://j3seer.github.io/tags/pandas/</loc>
     <lastmod>2023-01-23T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://localhost:1313/posts/pycgi_bi0ctf/</loc>
+  </url><url>
+    <loc>https://j3seer.github.io/posts/pycgi_bi0ctf/</loc>
     <lastmod>2023-01-23T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://localhost:1313/tags/python/</loc>
+  </url><url>
+    <loc>https://j3seer.github.io/tags/python/</loc>
     <lastmod>2023-01-23T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://localhost:1313/tags/rce/</loc>
+  </url><url>
+    <loc>https://j3seer.github.io/tags/rce/</loc>
     <lastmod>2023-01-23T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://localhost:1313/tags/jinja/</loc>
+  </url><url>
+    <loc>https://j3seer.github.io/tags/jinja/</loc>
     <lastmod>2022-12-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://localhost:1313/posts/sparkctf-2022-writeup/</loc>
+  </url><url>
+    <loc>https://j3seer.github.io/posts/sparkctf-2022---writeup/</loc>
     <lastmod>2022-12-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://localhost:1313/posts/</loc>
+  </url><url>
+    <loc>https://j3seer.github.io/posts/</loc>
     <lastmod>2022-09-29T10:46:25-04:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://localhost:1313/</loc>
+  </url><url>
+    <loc>https://j3seer.github.io/</loc>
     <lastmod>2022-09-29T10:29:54-04:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://localhost:1313/posts/dicectfhope_writeup/</loc>
+  </url><url>
+    <loc>https://j3seer.github.io/posts/dicectf@hope_writeup/</loc>
     <lastmod>2022-09-29T08:59:19-04:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://localhost:1313/tags/mathjax/</loc>
+  </url><url>
+    <loc>https://j3seer.github.io/tags/mathjax/</loc>
     <lastmod>2022-09-29T08:59:19-04:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://localhost:1313/tags/sql-injection/</loc>
+  </url><url>
+    <loc>https://j3seer.github.io/tags/sql-injection/</loc>
     <lastmod>2022-09-29T08:59:19-04:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://localhost:1313/tags/xss/</loc>
+  </url><url>
+    <loc>https://j3seer.github.io/tags/xss/</loc>
     <lastmod>2022-09-29T08:59:19-04:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://localhost:1313/posts/ncsc_2022_writeup/</loc>
+  </url><url>
+    <loc>https://j3seer.github.io/posts/ncsc_2022_writeup/</loc>
     <lastmod>2022-02-13T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://localhost:1313/tags/nginx/</loc>
+  </url><url>
+    <loc>https://j3seer.github.io/tags/nginx/</loc>
     <lastmod>2022-02-13T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://localhost:1313/tags/php/</loc>
+  </url><url>
+    <loc>https://j3seer.github.io/tags/php/</loc>
     <lastmod>2022-02-13T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://j3seer.github.io/whoami/</loc>
+  </url><url>
+    <loc>https://j3seer.github.io/categories/</loc>
   </url>
-  
-  <url>
-    <loc>http://localhost:1313/whoami/</loc>
-  </url>
-  
-  <url>
-    <loc>http://localhost:1313/categories/</loc>
-  </url>
-  
 </urlset>

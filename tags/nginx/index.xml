@@ -1,29 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>nginx on j3seer</title>
-    <link>http://localhost:1313/tags/nginx/</link>
-    <description>Recent content in nginx on j3seer</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <title>Nginx on j3seer</title>
+    <link>https://j3seer.github.io/tags/nginx/</link>
+    <description>Recent content in Nginx on j3seer</description>
+    <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 13 Feb 2022 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="http://localhost:1313/tags/nginx/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <atom:link href="https://j3seer.github.io/tags/nginx/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>NCSC 2022 - Writeup</title>
-      <link>http://localhost:1313/posts/ncsc_2022_writeup/</link>
+      <link>https://j3seer.github.io/posts/ncsc_2022_writeup/</link>
       <pubDate>Sun, 13 Feb 2022 00:00:00 +0000</pubDate>
-      
-      <guid>http://localhost:1313/posts/ncsc_2022_writeup/</guid>
-      <description>Our team got 5th
-Solved Web challenges
-Team score :  Welcome to Web Universe Let&amp;rsquo;s warmup a little bit now with some cool stuffs! Web is really always the best!!
-Link: http://20.119.58.135:4567/leetstatus
-Author: Kahla
-At first i didn&amp;rsquo;t know where to go and how to try to solve this i tried to check for robots.txt or index.php or index.html .. couldn&amp;rsquo;t find anything until i checked the source code that was provided</description>
+      <guid>https://j3seer.github.io/posts/ncsc_2022_writeup/</guid>
+      <description>&lt;p&gt;Our team got 5th&lt;/p&gt;&#xA;&lt;p&gt;Solved Web challenges&lt;/p&gt;&#xA;&lt;h2 id=&#34;team-score-&#34;&gt;Team score :&lt;/h2&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://user-images.githubusercontent.com/58823465/151805184-05292ad7-6630-4776-8fe5-2826ecf90ee1.png&#34; alt=&#34;task_hashed&#34;&gt;&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h1 id=&#34;welcome-to-web-universe&#34;&gt;Welcome to Web Universe&lt;/h1&gt;&#xA;&lt;p&gt;Let&amp;rsquo;s warmup a little bit now with some cool stuffs! Web is really always the best!!&lt;/p&gt;&#xA;&lt;p&gt;Link: http://20.119.58.135:4567/leetstatus&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;Author: Kahla&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://user-images.githubusercontent.com/58823465/151862530-52d045f4-912a-4ade-8e36-c3651dfd416e.png&#34; alt=&#34;c&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;At first i didn&amp;rsquo;t know where to go and how to try to solve this&#xA;i tried to check for robots.txt or index.php or index.html .. couldn&amp;rsquo;t find anything until i checked the source code that was provided&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

