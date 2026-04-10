@@ -1,0 +1,389 @@
+<!DOCTYPE html><html lang="en"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22></text></svg>"><meta name="generator" content="Astro v5.13.9"><!-- Canonical URL --><link rel="canonical" href="https://j3seer.github.io/blog/00-ncsc_2022_writeup/"><!-- Primary Meta Tags --><title>NCSC 2022 - Writeup | j3seer</title><meta name="title" content="NCSC 2022 - Writeup | j3seer"><meta name="description" content="Writeup for challenges in the National Cyber Security Congress(NCSC) CTF by @Securinets "><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://j3seer.github.io/blog/00-ncsc_2022_writeup/"><meta property="og:title" content="NCSC 2022 - Writeup | j3seer"><meta property="og:description" content="Writeup for challenges in the National Cyber Security Congress(NCSC) CTF by @Securinets "><meta property="og:image" content="https://j3seer.github.io/astro-micro.jpg"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://j3seer.github.io/blog/00-ncsc_2022_writeup/"><meta property="twitter:title" content="NCSC 2022 - Writeup | j3seer"><meta property="twitter:description" content="Writeup for challenges in the National Cyber Security Congress(NCSC) CTF by @Securinets "><meta property="twitter:image" content="https://j3seer.github.io/astro-micro.jpg"><!-- PageFind --><link href="/pagefind/pagefind-ui.css" rel="stylesheet"><script src="/pagefind/pagefind-ui.js"></script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.B3vRBseb.js"></script><script>
+  function init() {
+    preloadTheme();
+    onScroll();
+    animate();
+    updateThemeButtons();
+    addCopyCodeButtons();
+    setGiscusTheme();
+
+    const backToTop = document.getElementById("back-to-top");
+    backToTop?.addEventListener("click", (event) => scrollToTop(event));
+
+    const backToPrev = document.getElementById("back-to-prev");
+    backToPrev?.addEventListener("click", () => window.history.back());
+
+    const lightThemeButton = document.getElementById("light-theme-button");
+    lightThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "light");
+      toggleTheme(false);
+      updateThemeButtons();
+    });
+
+    const darkThemeButton = document.getElementById("dark-theme-button");
+    darkThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "dark");
+      toggleTheme(true);
+      updateThemeButtons();
+    });
+
+    const systemThemeButton = document.getElementById("system-theme-button");
+    systemThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "system");
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+      updateThemeButtons();
+    });
+
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", (event) => {
+        if (localStorage.theme === "system") {
+          toggleTheme(event.matches);
+        }
+      });
+
+    document.addEventListener("scroll", onScroll);
+  }
+
+  function updateThemeButtons() {
+    const theme = localStorage.getItem("theme");
+    const lightThemeButton = document.getElementById("light-theme-button");
+    const darkThemeButton = document.getElementById("dark-theme-button");
+    const systemThemeButton = document.getElementById("system-theme-button");
+
+    function removeActiveButtonTheme(button) {
+      button?.classList.remove("bg-black/5");
+      button?.classList.remove("dark:bg-white/5");
+    }
+
+    function addActiveButtonTheme(button) {
+      button?.classList.add("bg-black/5");
+      button?.classList.add("dark:bg-white/5");
+    }
+
+    removeActiveButtonTheme(lightThemeButton);
+    removeActiveButtonTheme(darkThemeButton);
+    removeActiveButtonTheme(systemThemeButton);
+
+    if (theme === "light") {
+      addActiveButtonTheme(lightThemeButton);
+    } else if (theme === "dark") {
+      addActiveButtonTheme(darkThemeButton);
+    } else {
+      addActiveButtonTheme(systemThemeButton);
+    }
+  }
+
+  function animate() {
+    const animateElements = document.querySelectorAll(".animate");
+
+    animateElements.forEach((element, index) => {
+      setTimeout(() => {
+        element.classList.add("show");
+      }, index * 100);
+    });
+  }
+
+  function onScroll() {
+    if (window.scrollY > 0) {
+      document.documentElement.classList.add("scrolled");
+    } else {
+      document.documentElement.classList.remove("scrolled");
+    }
+  }
+
+  function scrollToTop(event) {
+    event.preventDefault();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }
+
+  function toggleTheme(dark) {
+    const css = document.createElement("style");
+
+    css.appendChild(
+      document.createTextNode(
+        `* {
+             -webkit-transition: none !important;
+             -moz-transition: none !important;
+             -o-transition: none !important;
+             -ms-transition: none !important;
+             transition: none !important;
+          }
+        `,
+      ),
+    );
+
+    document.head.appendChild(css);
+
+    if (dark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+    window.getComputedStyle(css).opacity;
+    document.head.removeChild(css);
+
+    setGiscusTheme();
+  }
+
+  function preloadTheme() {
+    const userTheme = localStorage.theme;
+
+    if (userTheme === "light" || userTheme === "dark") {
+      toggleTheme(userTheme === "dark");
+    } else {
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+  }
+
+  function addCopyCodeButtons() {
+    let copyButtonLabel = "📋";
+    let codeBlocks = Array.from(document.querySelectorAll("pre"));
+
+    async function copyCode(codeBlock, copyButton) {
+      const codeText = codeBlock.innerText;
+      const buttonText = copyButton.innerText;
+      const textToCopy = codeText.replace(buttonText, "");
+
+      await navigator.clipboard.writeText(textToCopy);
+      copyButton.innerText = "✅";
+
+      setTimeout(() => {
+        copyButton.innerText = copyButtonLabel;
+      }, 2000);
+    }
+
+    for (let codeBlock of codeBlocks) {
+      const wrapper = document.createElement("div");
+      wrapper.style.position = "relative";
+
+      const copyButton = document.createElement("button");
+      copyButton.innerText = copyButtonLabel;
+      copyButton.classList = "copy-code";
+
+      codeBlock.setAttribute("tabindex", "0");
+      codeBlock.appendChild(copyButton);
+
+      codeBlock.parentNode.insertBefore(wrapper, codeBlock);
+      wrapper.appendChild(codeBlock);
+
+      copyButton?.addEventListener("click", async () => {
+        await copyCode(codeBlock, copyButton);
+      });
+    }
+  }
+
+  const setGiscusTheme = () => {
+    const giscus = document.querySelector(".giscus-frame");
+
+    const isDark = document.documentElement.classList.contains("dark");
+
+    if (giscus) {
+      const url = new URL(giscus.src);
+      url.searchParams.set("theme", isDark ? "dark" : "light");
+      giscus.src = url.toString();
+    }
+  };
+
+  document.addEventListener("DOMContentLoaded", () => init());
+  document.addEventListener("astro:after-swap", () => init());
+  preloadTheme();
+</script><link rel="stylesheet" href="/_astro/about.BEDs3EvQ.css"></head> <body> <noscript> <style>
+        .animate{
+          opacity:1;
+          translate: var(--tw-translate-x) calc(var(--spacing) * 0);
+        }
+      </style> </noscript> <header data-astro-transition-persist="astro-l7r54iwe-1"> <div class="mx-auto max-w-300 px-5"> <div class="flex flex-wrap justify-between gap-y-2"> <a href="/" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out">  <div class="flex items-center gap-2 font-semibold"> <img src="/logo.png" alt="Logo" class="size-6 object-contain"> <span>j3seer</span> </div>  </a> <nav class="flex items-center gap-4 text-sm"> <a href="/blog" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]">  <span>
+Blog
+</span>  </a>  ~  <a href="/cves" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]">  <span>
+CVEs
+</span>  </a>  ~  <a href="/about" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]">  <span>
+About
+</span>  </a> <button id="magnifying-glass" aria-label="Search" class="flex items-center rounded-sm border border-black/15 bg-neutral-100 px-2 py-1 text-xs transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:bg-neutral-900 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> <svg height="16" stroke-linejoin="round" viewBox="0 0 16 16" width="16" style="color: currentcolor;"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.5 7C3.5 5.067 5.067 3.5 7 3.5C8.933 3.5 10.5 5.067 10.5 7C10.5 7.88461 10.1718 8.69256 9.63058 9.30876L9.30876 9.63058C8.69256 10.1718 7.88461 10.5 7 10.5C5.067 10.5 3.5 8.933 3.5 7ZM9.96544 11.0261C9.13578 11.6382 8.11014 12 7 12C4.23858 12 2 9.76142 2 7C2 4.23858 4.23858 2 7 2C9.76142 2 12 4.23858 12 7C12 8.11014 11.6382 9.13578 11.0261 9.96544L14.0303 12.9697L14.5607 13.5L13.5 14.5607L12.9697 14.0303L9.96544 11.0261Z" fill="currentColor"></path></svg>
+&nbsp;Search
+</button> </nav> </div> </div> </header> <main>  <div class="mx-auto max-w-300 px-5"> <div class="animate"> <a href="/blog" class="not-prose group relative flex w-fit flex-nowrap rounded-sm border border-black/15 py-1.5 pl-7 pr-3 transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute left-2 top-1/2 size-4 -translate-y-1/2 fill-none stroke-current stroke-2"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 scale-x-0 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-hover:scale-x-100 group-focus-visible:translate-x-0 group-focus-visible:scale-x-100"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-focus-visible:translate-x-0"></polyline> </svg> <div class="text-sm"> Back to blog </div> </a> </div> <div class="my-10 space-y-1"> <div class="animate flex items-center gap-1.5"> <div class="font-base text-sm"> <time datetime="2022-02-13T00:00:00.000Z"> February 13, 2022 </time> </div>
+&bull;
+<div class="font-base text-sm"> 4 min read </div> </div> <h1 class="animate text-3xl font-semibold text-black dark:text-white"> NCSC 2022 - Writeup </h1>  </div> <details open class="animate group rounded-lg border border-black/15 my-5 dark:border-white/20"> <summary class="cursor-pointer rounded-t-lg px-3 py-1.5 font-medium transition-colors group-open:bg-black/5 hover:bg-black/5 dark:group-open:bg-white/5 hover:dark:bg-white/5">Table of Contents</summary> <nav> <ul class="py-3"> <li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#challenges" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Challenges </a> <ul class="translate-x-3"> <li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#welcome-to-web-universe" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Welcome to Web Universe </a>  </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#peehpee" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> PeeHpee </a>  </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#broken-pinggyy" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Broken Pinggyy </a>  </li> </ul> </li> </ul> </nav> </details><article class="animate"> <h1 id="challenges">Challenges</h1>
+<h2 id="welcome-to-web-universe">Welcome to Web Universe</h2>
+<p>Let’s warmup a little bit now with some cool stuffs! Web is really always the best!!</p>
+<p>Link: <a href="http://20.119.58.135:4567/leetstatus">http://20.119.58.135:4567/leetstatus</a></p>
+<p><strong>Author: Kahla</strong></p>
+<p><img src="https://user-images.githubusercontent.com/58823465/151862530-52d045f4-912a-4ade-8e36-c3651dfd416e.png" alt="c"></p>
+<p>At first i didn’t know where to go and how to try to solve this
+i tried to check for robots.txt or index.php or index.html .. couldn’t find anything until i checked the source code that was provided</p>
+<p>it seems like the website is running using nginx !</p>
+<p>looking into <code>main.py</code> we see this :</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:var(--astro-code-token-keyword)">from</span><span style="color:var(--astro-code-foreground)"> flask </span><span style="color:var(--astro-code-token-keyword)">import</span><span style="color:var(--astro-code-foreground)"> Flask</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">import</span><span style="color:var(--astro-code-foreground)"> os</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">flag</span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-foreground)">os</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">getenv</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">"FLAG"</span><span style="color:var(--astro-code-token-punctuation)">)</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">app </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-token-function)"> Flask</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-constant)">__name__</span><span style="color:var(--astro-code-token-punctuation)">, static_url_path</span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-token-string-expression)">'/static/'</span><span style="color:var(--astro-code-token-punctuation)">)</span></span>
+<span class="line"><span style="color:var(--astro-code-token-function)">@app</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">route</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">"/v1/status"</span><span style="color:var(--astro-code-token-punctuation)">)</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">def</span><span style="color:var(--astro-code-token-function)"> index</span><span style="color:var(--astro-code-foreground)">():</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">	return</span><span style="color:var(--astro-code-token-string-expression)"> "Everything is good afaik"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-function)">@app</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">route</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">"/flag"</span><span style="color:var(--astro-code-token-punctuation)">)</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">def</span><span style="color:var(--astro-code-token-function)"> flag</span><span style="color:var(--astro-code-foreground)">():</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">	return</span><span style="color:var(--astro-code-foreground)"> flag</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">if</span><span style="color:var(--astro-code-token-constant)"> __name__</span><span style="color:var(--astro-code-token-keyword)"> ==</span><span style="color:var(--astro-code-token-string-expression)"> '__main__'</span><span style="color:var(--astro-code-token-punctuation)">:</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">	app</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">run</span><span style="color:var(--astro-code-token-punctuation)">()</span></span></code></pre>
+<p>nginx config file :</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>server {</span></span>
+<span class="line"><span>listen 80;</span></span>
+<span class="line"><span>server_name welcome.task;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>location /leet {</span></span>
+<span class="line"><span>  proxy_pass http://api:5000/v1/;</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>access_log off;</span></span>
+<span class="line"><span>error_log /var/log/nginx/error.log error;</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>From this we can conclude that the <code>"leet"</code> part is like a prefix for the other webpages
+After few googling i figured that we can try to find the path to /flag
+===> path traversal !!</p>
+<p>and this is possible because of the misconfiguration of nginx</p>
+<p>you can read more about this here :</p>
+<p><a href="https://www.acunetix.com/vulnerabilities/web/path-traversal-via-misconfigured-nginx-alias/">https://www.acunetix.com/vulnerabilities/web/path-traversal-via-misconfigured-nginx-alias/</a></p>
+<p>finally we find the path to be ../flag</p>
+<p>Path : <code>http://x.x.x.x/leet../flag</code></p>
+<p>and we get our flag :</p>
+<p><code>Securinets{Nginx_Is_NoT_ThaT_GooD_AftER_All}</code></p>
+<hr>
+<h2 id="peehpee">PeeHpee</h2>
+<p>Dali likes PhP because it’s weird and has a lot of bugs. Is that really true ?
+Link: <a href="http://20.119.58.135:1234">http://20.119.58.135:1234</a></p>
+<p><strong>Author: Kahla</strong></p>
+<p>we were provided this php source code</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="php"><code><span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">&#x3C;?</span><span style="color:var(--astro-code-foreground)">php</span></span>
+<span class="line"><span style="color:var(--astro-code-token-comment)">//Show Page code source</span></span>
+<span class="line"><span style="color:var(--astro-code-token-function)">highlight_file</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-constant)">__FILE__</span><span style="color:var(--astro-code-token-punctuation)">)</span><span style="color:var(--astro-code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">require</span><span style="color:var(--astro-code-token-string-expression)"> "secret.php"</span><span style="color:var(--astro-code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">if</span><span style="color:var(--astro-code-foreground)">(</span><span style="color:var(--astro-code-token-function)">isset</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-function)">$_GET[</span><span style="color:var(--astro-code-token-string-expression)">"__"</span><span style="color:var(--astro-code-token-function)">]</span><span style="color:var(--astro-code-token-punctuation)">)</span><span style="color:var(--astro-code-token-keyword)">&#x26;&#x26;</span><span style="color:var(--astro-code-token-function)">isset</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-function)">$_GET[</span><span style="color:var(--astro-code-token-string-expression)">"_"</span><span style="color:var(--astro-code-token-function)">]</span><span style="color:var(--astro-code-token-punctuation)">)</span><span style="color:var(--astro-code-foreground)">){</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">$x</span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-foreground)">$_GET[</span><span style="color:var(--astro-code-token-string-expression)">"__"</span><span style="color:var(--astro-code-foreground)">];</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">$inp</span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-token-function)">preg_replace</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">"/[^A-Za-z0-9$]/"</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-token-string-expression)">",$_GET["</span><span style="color:var(--astro-code-token-function)">_</span><span style="color:var(--astro-code-token-string-expression)">"]);</span></span>
+<span class="line"><span style="color:var(--astro-code-token-string-expression)">if($inp==="</span><span style="color:var(--astro-code-token-function)">Kahla</span><span style="color:var(--astro-code-token-string-expression)">"){</span></span>
+<span class="line"><span style="color:var(--astro-code-token-string-expression)">    die("</span><span style="color:var(--astro-code-token-function)">Hacking Attempt detected</span><span style="color:var(--astro-code-token-string-expression)">");</span></span>
+<span class="line"><span style="color:var(--astro-code-token-string-expression)">}</span></span>
+<span class="line"><span style="color:var(--astro-code-token-string-expression)">else{</span></span>
+<span class="line"><span style="color:var(--astro-code-token-string-expression)">    if(eval("</span><span style="color:var(--astro-code-token-keyword)">return</span><span style="color:var(--astro-code-token-function)"> $inp</span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-token-string-expression)">".$inp."</span><span style="color:var(--astro-code-token-function)">;</span><span style="color:var(--astro-code-token-string-expression)">")==="</span><span style="color:var(--astro-code-token-function)">Kahla</span><span style="color:var(--astro-code-token-string-expression)">"){</span></span>
+<span class="line"><span style="color:var(--astro-code-token-string-expression)">        echo $flag;</span></span>
+<span class="line"><span style="color:var(--astro-code-token-string-expression)">    }</span></span>
+<span class="line"><span style="color:var(--astro-code-token-string-expression)">    else{</span></span>
+<span class="line"><span style="color:var(--astro-code-token-string-expression)">        die("</span><span style="color:var(--astro-code-token-function)">Pretty Close maybe </span><span style="color:var(--astro-code-token-keyword)">?</span><span style="color:var(--astro-code-token-string-expression)">");</span></span>
+<span class="line"><span style="color:var(--astro-code-token-string-expression)">    }</span></span>
+<span class="line"><span style="color:var(--astro-code-token-string-expression)">}</span></span>
+<span class="line"><span style="color:var(--astro-code-token-string-expression)">}</span></span>
+<span class="line"><span style="color:var(--astro-code-token-string-expression)">?></span></span>
+<span class="line"></span></code></pre>
+<p>trying to send <strong>“Kahla”</strong> in the <strong>_</strong> param prints out this prompt</p>
+<p>Payload : <code>http://20.119.58.135:1234/?__=&#x26;_=Kahla</code></p>
+<p>Output :</p>
+<p><img src="https://user-images.githubusercontent.com/58823465/151814781-7f079c2b-0cf4-42eb-8a71-250713e79fca.png" alt="a"></p>
+<p>We notice that we have the other <code>__</code> param too that we haven’t tried to use yet
+and it seems sorta useless but its there soo we might as well just use it right?</p>
+<p>So we know that the code is filtering the word <strong>Kahla</strong> and won’t allow us to get the flag with it</p>
+<p>So how about we use the <code>__</code> to send it to the <code>_</code> param? since it’s not verifying that param</p>
+<p>Payload : <code>http://20.119.58.135:1234/?__=Kahla&#x26;_=$_GET[__]</code></p>
+<p>Output : <img src="https://user-images.githubusercontent.com/58823465/151814811-b5b61141-c69c-47ba-a3dd-73827772fffc.png" alt="6"></p>
+<p>well i guess we’re pretty close :/ ?
+We can’t use the <strong>GET</strong> to send the param because the regex won’t allow the [] characters
+But notice that we have a <code>$x</code> variable in the source code that takes the <code>__</code> value !!</p>
+<p>All we need to do is just to pass that through the <code>_</code> param</p>
+<p>Payload : <code>http://20.119.58.135:1234/?__=Kahla&#x26;_=$x</code></p>
+<p>Output : <code>Securinets{PeehPee_1s_AlWAYs_H3r3}</code></p>
+<p>And there’s our flag!</p>
+<hr>
+<h2 id="broken-pinggyy">Broken Pinggyy</h2>
+<p>I’ve developed a simple web app to ping any IP/domain but i had some problems in my code .. I’m a newbie web developer so i’ll give the source code to help me. flag location => /flag Link: <a href="http://20.119.58.135:789/">http://20.119.58.135:789/</a></p>
+<p><strong>Author: MONT4</strong></p>
+<p>We were presented by this webpage that allows us to ping other webpages but
+the website seems like its not working</p>
+<p><img src="https://user-images.githubusercontent.com/58823465/151815537-56958a35-7b1c-43a9-9c9b-9228a8364c00.png" alt="3"></p>
+<p>I tried to get command injection using just <code>ls</code> or <code>; ls</code>  but nothing works</p>
+<p>Looking through the provided source code we can see that there’s a typo in the ping command</p>
+<p>Notice the <code>'</code> before <code>ping</code></p>
+<p><img src="https://user-images.githubusercontent.com/58823465/151815670-63d7d1e3-8365-4d4b-99ab-702601011a64.png" alt="image"></p>
+<p>so now we just need to add a <code>'</code> before anything we type and we have to add <code>;</code> to close out the first command
+so our payload becomes</p>
+<p><code>' ; ls</code></p>
+<p><img src="https://user-images.githubusercontent.com/58823465/151815731-b4e9f0a4-02c3-47fe-8c8a-f56aa89002c3.png" alt="image"></p>
+<p>but we still don’t get anything ! well that’s because the flag is at /flag so we just need to <strong>cat</strong> that</p>
+<p>Payload becomes :</p>
+<p><code>' ; cat /flag</code></p>
+<p><img src="https://user-images.githubusercontent.com/58823465/151815784-28939afe-9880-4945-a4dc-a28a1fd65335.png" alt="image"></p>
+<p>there’s our flag :</p>
+<p><code>Securinets{Be_c4refuL_fr0m_C0mmand_1njection!!}</code></p> <div class="mt-24"> <div class="grid grid-cols-2 gap-1.5 sm:gap-3"> <a href="/blog/01-dicectfhope_writeup" class="group relative flex flex-nowrap rounded-lg border border-black/15 px-4 py-3 pl-10 no-underline transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute left-2 top-1/2 size-5 -translate-y-1/2 fill-none stroke-current stroke-2"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-3 scale-x-0 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-hover:scale-x-100 group-focus-visible:translate-x-0 group-focus-visible:scale-x-100"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-focus-visible:translate-x-0"></polyline> </svg> <div class="flex items-center text-sm">DiceCTF@Hope 2022 - Writeup</div> </a> <div class="invisible"></div> </div> </div> <!-- Remove github comment feature --> <!--
+        <div class="mt-24">
+          <Giscus />
+        </div>
+      --> </article> </div>  </main> <footer class="animate"> <div class="mx-auto max-w-300 px-5"> <div class="relative"> <div class="absolute -top-12 right-0"> <script type="module">typeof window<"u"&&window.addEventListener("DOMContentLoaded",()=>{const e=document.getElementById("back-to-top");e&&e.addEventListener("click",()=>{window.scrollTo({top:0,behavior:"smooth"})})});</script> <button id="back-to-top" class="group relative flex w-fit flex-nowrap rounded-sm border border-black/15 py-1.5 pl-8 pr-3 transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute left-2 top-1/2 size-4 -translate-y-1/2 rotate-90 fill-none stroke-current stroke-2"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 scale-x-0 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-hover:scale-x-100 group-focus-visible:translate-x-0 group-focus-visible:scale-x-100"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-focus-visible:translate-x-0"></polyline> </svg> <div class="text-sm">Back to top</div> </button> </div> </div> <div class="flex items-center justify-between"> <div>&copy; 2026 • j3seer </div> <div class="flex flex-wrap items-center gap-1.5"> <button id="light-theme-button" aria-label="Light theme" class="group flex size-9 items-center justify-center rounded-sm border border-black/15 hover:bg-black/5 focus-visible:bg-black/5 dark:border-white/20 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="transition-colors duration-300 ease-in-out group-hover:animate-pulse group-hover:stroke-black group-focus-visible:animate-pulse group-focus-visible:stroke-black dark:group-hover:stroke-white dark:group-focus-visible:stroke-white"> <circle cx="12" cy="12" r="5"></circle> <line x1="12" y1="1" x2="12" y2="3"></line> <line x1="12" y1="21" x2="12" y2="23"></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line> <line x1="1" y1="12" x2="3" y2="12"></line> <line x1="21" y1="12" x2="23" y2="12"></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line> </svg> </button> <button id="dark-theme-button" aria-label="Dark theme" class="group flex size-9 items-center justify-center rounded-sm border border-black/15 hover:bg-black/5 focus-visible:bg-black/5 dark:border-white/20 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="transition-colors duration-300 ease-in-out group-hover:animate-pulse group-hover:stroke-black group-focus-visible:animate-pulse group-focus-visible:stroke-black dark:group-hover:stroke-white dark:group-focus-visible:stroke-white"> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path> </svg> </button> <button id="system-theme-button" aria-label="System theme" class="group flex size-9 items-center justify-center rounded-sm border border-black/15 hover:bg-black/5 focus-visible:bg-black/5 dark:border-white/20 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="transition-colors duration-300 ease-in-out group-hover:animate-pulse group-hover:stroke-black group-focus-visible:animate-pulse group-focus-visible:stroke-black dark:group-hover:stroke-white dark:group-focus-visible:stroke-white"> <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect> <line x1="8" y1="21" x2="16" y2="21"></line> <line x1="12" y1="17" x2="12" y2="21"></line> </svg> </button> </div> </div> </div> </footer> <aside data-pagefind-ignore> <div id="backdrop" class="bg-[rgba(0, 0, 0, 0.5] invisible fixed left-0 top-0 z-50 flex h-screen w-full justify-center p-6 backdrop-blur-xs" data-astro-transition-persist="astro-3snakcvo-2"> <div id="pagefind-container" class="m-0 flex h-fit max-h-[80%] w-full max-w-(--breakpoint-sm) flex-col overflow-auto rounded-sm border border-black/15 bg-neutral-100 p-2 px-4 py-3 shadow-lg dark:border-white/20 dark:bg-neutral-900"> <div id="search" class="pagefind-ui pagefind-init" data-pagefind-ui data-bundle-path="/pagefind/" data-ui-options="{&#34;showImages&#34;:false,&#34;excerptLength&#34;:15,&#34;resetStyles&#34;:false}"></div> <script type="module" src="/_astro/Search.astro_astro_type_script_index_0_lang.DSe1Ey-Z.js"></script> <div class="mr-2 pb-1 pt-4 text-right text-xs dark:prose-invert">
+Press <span class="prose text-xs dark:prose-invert"><kbd class="">Esc</kbd></span> or click anywhere to close
+</div> </div> </div> </aside> <script>
+  const magnifyingGlass = document.getElementById("magnifying-glass");
+  const backdrop = document.getElementById("backdrop");
+
+  function openPagefind() {
+    const searchDiv = document.getElementById("search");
+    const search = searchDiv.querySelector("input");
+    setTimeout(() => {
+      search.focus();
+    }, 0);
+    backdrop?.classList.remove("invisible");
+    backdrop?.classList.add("visible");
+  }
+
+  function closePagefind() {
+    const search = document.getElementById("search");
+    search.value = "";
+    backdrop?.classList.remove("visible");
+    backdrop?.classList.add("invisible");
+  }
+
+  // open pagefind
+  magnifyingGlass?.addEventListener("click", () => {
+    openPagefind();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "/") {
+      e.preventDefault();
+      openPagefind();
+    } else if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+      e.preventDefault();
+      openPagefind();
+    }
+  });
+
+  // close pagefind
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      closePagefind();
+    }
+  });
+
+  // close pagefind when searched result(link) clicked
+  document.addEventListener("click", (event) => {
+    if (event.target.classList.contains("pagefind-ui__result-link")) {
+      closePagefind();
+    }
+  });
+
+  backdrop?.addEventListener("click", (event) => {
+    if (!event.target.closest("#pagefind-container")) {
+      closePagefind();
+    }
+  });
+
+  // prevent form submission
+  const form = document.getElementById("form");
+  form?.addEventListener("submit", (event) => {
+    event.preventDefault();
+  });
+</script>  </body></html>

